@@ -151,6 +151,11 @@ class Stream {
 }
 
 
+
+// make stream longer
+// add switching effect from 101 
+
+
 // stick some questions together 
 // lett the characters switch from one question to another 
 // 

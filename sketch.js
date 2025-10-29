@@ -94,29 +94,64 @@ class Stream {
   }
   
 
+  // Single Word Stream
+  // /**
+  //  * Generates all symbols for this stream
+  //  * @param {number} x - Horizontal position for the stream
+  //  * @param {number} y - Starting vertical position
+  //  */
+  // generateSymbols(x, y) {
+  //   let opacity = 255;
+
+  //   // Pick ONE word for this entire stream
+  //   const streamWord = words[floor(random(words.length))];
+
+  //   // Start from the LAST letter and work backwards
+  //   for (let i = streamWord.length - 1; i >= 0; i--) {
+  //     const first = (i === 0); // First letter (index 0) will be brightest
+  //     const letter = streamWord[i];
+  //     const symbol = new MatrixSymbol(x, y, this.speed, first, opacity, letter);
+
+  //     this.symbols.push(symbol);
+  //     opacity -= (255 / streamWord.length) / fadeInterval; // Fade based on word length
+  //     y -= symbolSize;
+  //   }
+  // }
+
+
+  // Multi Word Stream
   /**
-   * Generates all symbols for this stream
-   * @param {number} x - Horizontal position for the stream
-   * @param {number} y - Starting vertical position
-   */
+  * Generates all symbols for this stream
+  * @param {number} x - Horizontal position for the stream
+  * @param {number} y - Starting vertical position
+  */
   generateSymbols(x, y) {
     let opacity = 255;
 
-    // Pick ONE word for this entire stream
-    const streamWord = words[floor(random(words.length))];
+    // Pick random number of words to stack (1-3 words)
+    const numWords = floor(random(1, 4)); // 1, 2, or 3 words
+    let allLetters = []; // Store all letters from all words
+
+    // Combine multiple words
+    for (let w = 0; w < numWords; w++) {
+      const word = words[floor(random(words.length))];
+      // Split word into individual letters and add to array
+      allLetters = allLetters.concat(word.split(''));
+      
+    }
 
     // Start from the LAST letter and work backwards
-    for (let i = streamWord.length - 1; i >= 0; i--) {
+    for (let i = allLetters.length - 1; i >= 0; i--) {
       const first = (i === 0); // First letter (index 0) will be brightest
-      const letter = streamWord[i];
+      const letter = allLetters[i];
       const symbol = new MatrixSymbol(x, y, this.speed, first, opacity, letter);
 
       this.symbols.push(symbol);
-      opacity -= (255 / streamWord.length) / fadeInterval; // Fade based on word length
+      opacity -= (255 / allLetters.length) / fadeInterval; // Fade based on total length
       y -= symbolSize;
     }
   }
-  
+
   /**
    * Renders all symbols in the stream and updates their state
    */

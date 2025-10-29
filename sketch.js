@@ -1,7 +1,7 @@
 let streams = [];
 let words = ['WHY', 'WHAT', 'WHO', 'HOW', 'WHEN', 'WHERE', 'WHICH', 'WHOSE', '??????', '????', '¿¿¿¿¿', '¿¿¿'];
 const fadeInterval = 1.6;
-const symbolSize = 14;
+const symbolSize = 24;
 
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
@@ -119,36 +119,59 @@ class Stream {
   // }
 
 
-  // Multi Word Stream
-  /**
-  * Generates all symbols for this stream
-  * @param {number} x - Horizontal position for the stream
-  * @param {number} y - Starting vertical position
-  */
+  // // Multi Word Stream
+  // /**
+  // * Generates all symbols for this stream
+  // * @param {number} x - Horizontal position for the stream
+  // * @param {number} y - Starting vertical position
+  // */
+  // generateSymbols(x, y) {
+  //   let opacity = 255;
+
+  //   // Pick random number of words to stack (1-3 words)
+  //   const numWords = floor(random(1, 4)); // 1, 2, or 3 words
+  //   let allLetters = []; // Store all letters from all words
+
+  //   // Combine multiple words
+  //   for (let w = 0; w < numWords; w++) {
+  //     const word = words[floor(random(words.length))];
+  //     // Split word into individual letters and add to array
+  //     allLetters = allLetters.concat(word.split(''));
+      
+  //   }
+
+  //   // Start from the LAST letter and work backwards
+  //   for (let i = allLetters.length - 1; i >= 0; i--) {
+  //     const first = (i === 0); // First letter (index 0) will be brightest
+  //     const letter = allLetters[i];
+  //     const symbol = new MatrixSymbol(x, y, this.speed, first, opacity, letter);
+
+  //     this.symbols.push(symbol);
+  //     opacity -= (255 / allLetters.length) / fadeInterval; // Fade based on total length
+  //     y -= symbolSize;
+  //   }
+  // }
+
   generateSymbols(x, y) {
-    let opacity = 255;
+    const numWords = floor(random(1, 4));
+    let allLetters = [];
 
-    // Pick random number of words to stack (1-3 words)
-    const numWords = floor(random(1, 4)); // 1, 2, or 3 words
-    let allLetters = []; // Store all letters from all words
-
-    // Combine multiple words
     for (let w = 0; w < numWords; w++) {
       const word = words[floor(random(words.length))];
-      // Split word into individual letters and add to array
       allLetters = allLetters.concat(word.split(''));
-      
+
     }
 
-    // Start from the LAST letter and work backwards
-    for (let i = allLetters.length - 1; i >= 0; i--) {
-      const first = (i === 0); // First letter (index 0) will be brightest
+    // Loop FORWARD and place first letter at top
+    for (let i = 0; i < allLetters.length; i++) {
       const letter = allLetters[i];
-      const symbol = new MatrixSymbol(x, y, this.speed, first, opacity, letter);
-
+      const isLast = (i === allLetters.length - 1); // Last letter = brightest
+      
+      // Opacity increases toward the end (brightest at bottom)
+      const opacity = 255 * ((i + 1) / allLetters.length);
+      
+      const symbol = new MatrixSymbol(x, y + (i * symbolSize), this.speed, isLast, opacity, letter);
       this.symbols.push(symbol);
-      opacity -= (255 / allLetters.length) / fadeInterval; // Fade based on total length
-      y -= symbolSize;
     }
   }
 
@@ -161,7 +184,7 @@ class Stream {
       if (symbol.first) {
         fill(140, 255, 170, symbol.opacity); // Bright green for first
       } else if (symbol.showBinary) {
-        fill(0, 200, 255, symbol.opacity); // Blue for binary
+        fill(0, 255, 70, symbol.opacity); // Blue for binary
       } else {
         fill(0, 255, 70, symbol.opacity); // Green for letters
       }
@@ -175,10 +198,6 @@ class Stream {
   }
 }
 
-
-
-// make stream longer
-// add switching effect from 101 
 
 
 // stick some questions together 

@@ -1,11 +1,49 @@
 let streams = [];
 let words = ['WHY', 'WHAT', 'WHO', 'HOW', 'WHEN', 'WHERE', 'WHICH', 'WHOSE', '??????', '????', '¿¿¿¿¿', '¿¿¿'];
+let userWords = []; // store user input for stream
 const fadeInterval = 1.6;
 const symbolSize = 24;
+
+let inputBox; // The input field
+let submitButton; // The submit button
 
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
   background(0);
+
+  let inputBoxW = 300;
+  let inputBoxH = 40;
+  let buttonW = 100;
+  let buttonH = 40;
+
+
+  // Create input box
+  inputBox = createInput('');
+  inputBox.size(inputBoxW, inputBoxH);
+  inputBox.center('horizontal'); // Center horizontally only
+  inputBox.position(inputBox.x, height / 2 - 50); // Set vertical position
+  inputBox.style('font-size', '20px');
+  inputBox.style('padding', '10px');
+  inputBox.style('background-color', '#000000');
+  inputBox.style('color', '#00ff00');
+  inputBox.style('border', '2px solid #00ff00');
+  inputBox.attribute('placeholder', 'Enter password...');
+  
+  // Create submit button
+  submitButton = createButton('SUBMIT');
+  submitButton.size(buttonW, buttonH);
+  submitButton.center('horizontal'); // Center horizontally only
+  submitButton.position(submitButton.x + 7, inputBox.y + inputBoxH + 40); // 20px below input
+  submitButton.size(100, 40);
+  submitButton.style('font-size', '16px');
+  submitButton.style('background-color', '#00ff00');
+  submitButton.style('color', '#000000');
+  submitButton.style('border', 'none');
+  submitButton.style('cursor', 'pointer');
+  submitButton.mousePressed(handleSubmit); // Call function when clicked
+
+
+  // generate initial stream of questions
   let x = 0;
   for (let i = 0; i <= width / symbolSize; i++) {
     const stream = new Stream();
@@ -19,10 +57,42 @@ function setup() {
 
 function draw() {
   background(0, 150);
+
+  // Draw "Enter password" text above input
+  fill(0, 255, 70); // Green color
+  textSize(20);
+  textAlign(CENTER);
+  text('ENTER PASSWORD', width / 2, height / 2 - 80);
+  
+  // Reset text settings for streams
+  textSize(symbolSize);
+  textAlign(LEFT);
+
   streams.forEach((stream) => {
     stream.render();
   });
 }
+
+function handleSubmit() {
+  let userInput = inputBox.value().trim(); // Get input and remove extra spaces
+  
+  if (userInput !== '') {
+    // Add to userWords array
+    userWords.push(userInput.toUpperCase()); // Store in uppercase
+    
+    // Create a new stream with this word (blue color)
+    const x = random(0, width); // Random horizontal position
+    const stream = new Stream(true); // Pass true to indicate it's a user stream
+    stream.generateSymbols(x, random(-2000, 0));
+    streams.push(stream);
+    
+    // Clear the input
+    inputBox.value('');
+    
+    console.log('User words:', userWords); // Debug
+  }
+}
+
 
 /**
  * MatrixSymbol - Represents a single character in the Matrix digital rain effect
@@ -88,11 +158,90 @@ class MatrixSymbol {
  */
 class Stream {
   
-  constructor() {
+  constructor(isUserStream = false) {  // ADD the parameter here!
     this.symbols = [];
     this.speed = random(5);
+    this.isUserStream = isUserStream; // FIXED: was "his.isUserStream"
   }
   
+  generateSymbols(x, y) {
+    const numWords = floor(random(1, 4));
+    let allLetters = [];
+
+    // Choose words based on stream type
+    if (this.isUserStream && userWords.length > 0) {
+      // Use user-submitted words
+      const wordsToUse = min(numWords, userWords.length);
+      
+      for (let w = 0; w < wordsToUse; w++) {
+        const randomIndex = floor(random(userWords.length));
+        const word = userWords[randomIndex];
+        allLetters = allLetters.concat(word.split(''));
+      }
+    } else {
+      // Use default words array
+      for (let w = 0; w < numWords; w++) {
+        const word = words[floor(random(words.length))];
+        allLetters = allLetters.concat(word.split(''));
+      }
+    }
+
+    // Loop FORWARD and place first letter at top
+    for (let i = 0; i < allLetters.length; i++) {
+      const letter = allLetters[i];
+      const isLast = (i === allLetters.length - 1); // Last letter = brightest
+      
+      // Opacity increases toward the end (brightest at bottom)
+      const opacity = 255 * ((i + 1) / allLetters.length);
+      
+      const symbol = new MatrixSymbol(x, y + (i * symbolSize), this.speed, isLast, opacity, letter);
+      this.symbols.push(symbol);
+    }
+  }
+
+  /**
+   * Renders all symbols in the stream and updates their state
+   */
+  render() {
+    this.symbols.forEach((symbol) => {
+      // Color based on what's being displayed
+      if (symbol.first) {
+        // Leading character (brightest)
+        if (this.isUserStream) {
+          fill(100, 200, 255, symbol.opacity); // Light blue for user stream
+        } else {
+          fill(255, 255, 255, symbol.opacity); // White for question stream
+        }
+      } else if (symbol.showBinary) {
+        // Binary numbers match stream color
+        if (this.isUserStream) {
+          fill(0, 150, 255, symbol.opacity); // Blue binary for user stream
+        } else {
+          fill(0, 255, 70, symbol.opacity); // Green binary for question stream
+        }
+      } else {
+        // Regular letters
+        if (this.isUserStream) {
+          fill(0, 150, 255, symbol.opacity); // Blue letters for user stream
+        } else {
+          fill(0, 255, 70, symbol.opacity); // Green letters for question stream
+        }
+      }
+
+      text(symbol.value, symbol.x, symbol.y);
+      symbol.rain();
+      symbol.switchToBinary(); // Always try to switch
+    });
+  }
+}
+
+
+
+
+// lett the characters switch from one question to another
+// add user input 
+// add sound
+
 
   // Single Word Stream
   // /**
@@ -151,55 +300,3 @@ class Stream {
   //     y -= symbolSize;
   //   }
   // }
-
-  generateSymbols(x, y) {
-    const numWords = floor(random(1, 4));
-    let allLetters = [];
-
-    for (let w = 0; w < numWords; w++) {
-      const word = words[floor(random(words.length))];
-      allLetters = allLetters.concat(word.split(''));
-
-    }
-
-    // Loop FORWARD and place first letter at top
-    for (let i = 0; i < allLetters.length; i++) {
-      const letter = allLetters[i];
-      const isLast = (i === allLetters.length - 1); // Last letter = brightest
-      
-      // Opacity increases toward the end (brightest at bottom)
-      const opacity = 255 * ((i + 1) / allLetters.length);
-      
-      const symbol = new MatrixSymbol(x, y + (i * symbolSize), this.speed, isLast, opacity, letter);
-      this.symbols.push(symbol);
-    }
-  }
-
-  /**
-   * Renders all symbols in the stream and updates their state
-   */
-  render() {
-    this.symbols.forEach((symbol) => {
-      // Color based on what's being displayed
-      if (symbol.first) {
-        fill(140, 255, 170, symbol.opacity); // Bright green for first
-      } else if (symbol.showBinary) {
-        fill(0, 255, 70, symbol.opacity); // Blue for binary
-      } else {
-        fill(0, 255, 70, symbol.opacity); // Green for letters
-      }
-
-      text(symbol.value, symbol.x, symbol.y);
-      symbol.rain();
-
-      symbol.switchToBinary(); // Always try to switch
-
-    });
-  }
-}
-
-
-
-// stick some questions together 
-// lett the characters switch from one question to another 
-// 

@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Figaroa - Scene 2: 3 Paths</title>
+  <title>Figaroa - Data Echoes & Traces</title>
   <meta name="description" content="VR Cyberspace Experience">
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.0.0/dist/aframe-extras.min.js"></script>
@@ -39,7 +39,7 @@
     
     <!-- Point Light: LEFT PATH (R) -->
     <a-entity light="type: point; color: #FF0000; intensity: 2; distance: 20" 
-              position="-4 2 -10"></a-entity>
+              position="-3.5 2 -10"></a-entity>
     
     <!-- Point Light: CENTER PATH (G) -->
     <a-entity light="type: point; color: #00FF00; intensity: 2; distance: 20" 
@@ -47,12 +47,51 @@
     
     <!-- Point Light: RIGHT PATH (B) -->
     <a-entity light="type: point; color: #0000FF; intensity: 2; distance: 20" 
-              position="4 2 -10"></a-entity>
+              position="3.5 2 -10"></a-entity>
 
     <!-- ============================================ -->
-    <!-- BEGIN BUTTON -->
+    <!-- INTRO SEQUENCE -->
     <!-- ============================================ -->
-    <a-entity id="beginButton" position="0 0.5 -3" class="clickable">
+    
+    <!-- TITLE SCREEN - "Data Echoes & Traces" -->
+    <a-entity id="titleScreen" position="0 2 -5" visible="true">
+      <!-- Main Title (drops down) -->
+      <a-text id="mainTitle"
+              value="DATA ECHOES & TRACES" 
+              position="0 3 0"
+              align="center" 
+              color="#00FFFF"
+              width="8"
+              shader="flat"
+              opacity="0"
+              animation="property: position; to: 0 0 0; dur: 2000; easing: easeOutCubic; delay: 500"
+              animation__fade="property: opacity; to: 1; dur: 1500; delay: 500">
+      </a-text>
+      
+      <!-- Subtitle glow lines -->
+      <a-box position="-2 -0.7 0" 
+             width="1.5" 
+             height="0.02" 
+             depth="0.01" 
+             color="#00FFFF"
+             opacity="0"
+             material="shader: flat; emissive: #00FFFF; emissiveIntensity: 2"
+             animation__fade="property: opacity; to: 0.8; dur: 1000; delay: 2500">
+      </a-box>
+      
+      <a-box position="2 -0.7 0" 
+             width="1.5" 
+             height="0.02" 
+             depth="0.01" 
+             color="#00FFFF"
+             opacity="0"
+             material="shader: flat; emissive: #00FFFF; emissiveIntensity: 2"
+             animation__fade="property: opacity; to: 0.8; dur: 1000; delay: 2500">
+      </a-box>
+    </a-entity>
+
+    <!-- BEGIN BUTTON (appears after title) -->
+    <a-entity id="beginButton" position="0 0.5 -3" class="clickable" visible="false">
       <!-- Button box -->
       <a-box width="1.5" 
              height="0.5" 
@@ -75,31 +114,86 @@
               width="3"
               shader="flat">
       </a-text>
-      
-      <!-- Glow effect -->
-      <!-- <a-ring position="0 0 -0.1" 
-              radius-inner="0.8" 
-              radius-outer="1" 
-              color="#00FFFF"
-              opacity="0.3"
-              material="shader: flat"
-              animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 1500">
-      </a-ring> -->
     </a-entity>
 
     <!-- ============================================ -->
-    <!-- PATHWAY HUB -->
+    <!-- INSTRUCTION PANEL -->
     <!-- ============================================ -->
+    <a-entity id="instructionPanel" position="0 1.5 -4" visible="false">
+      <!-- Panel background -->
+      <a-plane width="6" 
+               height="4" 
+               color="#0a0a0a"
+               opacity="0.9"
+               material="shader: flat">
+      </a-plane>
+      
+      <!-- Border -->
+      <a-plane width="6.1" 
+               height="4.1" 
+               position="0 0 -0.01"
+               color="#00FFFF"
+               opacity="0.3"
+               material="shader: flat">
+      </a-plane>
+      
+      <!-- Title -->
+      <a-text value="CHOOSE YOUR PATH" 
+              position="0 1.5 0.1" 
+              align="center" 
+              color="#00FFFF"
+              width="5"
+              shader="flat">
+      </a-text>
+      
+      <!-- Instructions -->
+      <a-text value="Three paths diverge in the cyberspace.\nEach path will test a different skill:\n\n[RED] TEXT PATH\nNavigate using text commands\nand written instructions\n\n[GREEN] AUDIO PATH\nFollow sound cues and\naudio directions\n\n[BLUE] MOVEMENT PATH\nUse physical movement\nto navigate obstacles\n\nSelect a path to begin your journey." 
+              position="0 0.2 0.1" 
+              align="center" 
+              color="#FFFFFF"
+              width="5"
+              shader="flat"
+              line-height="50">
+      </a-text>
+      
+      <!-- Continue button -->
+      <a-entity id="continueButton" position="0 -1.5 0.1" class="clickable">
+        <a-box width="2" 
+               height="0.4" 
+               depth="0.05" 
+               color="#1a1a1a"
+               material="shader: flat">
+          <a-box width="2.02" 
+                 height="0.42" 
+                 depth="0.03" 
+                 color="#00FFFF"
+                 opacity="0.3"
+                 position="0 0 -0.01">
+          </a-box>
+        </a-box>
+        
+        <a-text value="CONTINUE" 
+                position="0 0 0.04" 
+                align="center" 
+                color="#FFFFFF"
+                width="4"
+                shader="flat">
+        </a-text>
+      </a-entity>
+    </a-entity>
+
+    <!-- ============================================ -->
+    <!-- PATHWAY HUB (Hidden initially) -->
+    <!-- ============================================ -->
+    <a-entity id="pathwayHub" visible="false">
       
       <!-- ========================================== -->
       <!-- LEFT PATHWAY - TEXT (NEON RED) -->
-      <!-- Position: -2 (left side) -->
       <!-- ========================================== -->
       <a-entity id="pathwayText" class="pathway" position="-3.5 0 0">
         
         <!-- LEFT PATH - CONCENTRIC CIRCLES (RED) -->
         <a-entity id="circlesLeft" position="0 1.6 -8">
-          <!-- Circle 1 (Closest) -->
           <a-ring position="0 0 0" 
                   radius-inner="1.5" 
                   radius-outer="1.6" 
@@ -108,7 +202,6 @@
                   material="shader: flat">
           </a-ring>
           
-          <!-- Circle 2 -->
           <a-ring position="0 0 -3" 
                   radius-inner="1.5" 
                   radius-outer="1.6"  
@@ -117,7 +210,6 @@
                   material="shader: flat">
           </a-ring>
           
-          <!-- Circle 3 -->
           <a-ring position="0 0 -6" 
                   radius-inner="1.5"
                   radius-outer="1.6" 
@@ -126,7 +218,6 @@
                   material="shader: flat">
           </a-ring>
           
-          <!-- Circle 4 (Farthest) -->
           <a-ring position="0 0 -9" 
                   radius-inner="1.5" 
                   radius-outer="1.6" 
@@ -136,7 +227,7 @@
           </a-ring>
         </a-entity>
         
-        <!-- LEFT PATH - Line 1 (Outer left - darkest red) -->
+        <!-- LEFT PATH - Lines -->
         <a-box position="-0.6 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -145,7 +236,6 @@
                material="shader: flat; emissive: #880000; emissiveIntensity: 1.5">
         </a-box>
         
-        <!-- LEFT PATH - Line 2 (medium red) -->
         <a-box position="-0.3 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -154,7 +244,6 @@
                material="shader: flat; emissive: #CC0000; emissiveIntensity: 1.5">
         </a-box>
         
-        <!-- LEFT PATH - Line 3 (CENTER - brightest red) -->
         <a-box position="0 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -163,7 +252,6 @@
                material="shader: flat; emissive: #FF0000; emissiveIntensity: 2">
         </a-box>
         
-        <!-- LEFT PATH - Line 4 (medium red) -->
         <a-box position="0.3 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -172,7 +260,6 @@
                material="shader: flat; emissive: #CC0000; emissiveIntensity: 1.5">
         </a-box>
         
-        <!-- LEFT PATH - Line 5 (Outer right - darkest red) -->
         <a-box position="0.6 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -181,8 +268,8 @@
                material="shader: flat; emissive: #880000; emissiveIntensity: 1.5">
         </a-box>
         
-        <!-- LEFT PATH - Grid markers (dots along path) -->
-        <a-entity id="gridMarkersR">
+        <!-- LEFT PATH - Grid markers -->
+        <a-entity>
           <a-sphere position="0 0.05 -5" radius="0.05" color="#FF0000" opacity="0.6"></a-sphere>
           <a-sphere position="0 0.05 -10" radius="0.05" color="#FF0000" opacity="0.6"></a-sphere>
           <a-sphere position="0 0.05 -15" radius="0.05" color="#FF0000" opacity="0.6"></a-sphere>
@@ -201,14 +288,11 @@
 
       <!-- ========================================== -->
       <!-- CENTER PATHWAY - AUDIO (NEON GREEN) -->
-      <!-- Position: 0 (center) -->
       <!-- ========================================== -->
       <a-entity id="pathwayAudio" class="pathway" position="0 0 0">
 
-
         <!-- CENTER PATH - CONCENTRIC CIRCLES (GREEN) -->
         <a-entity id="circlesCenter" position="0 1.6 -8">
-          <!-- Circle 1 (Closest) -->
           <a-ring position="0 0 0" 
                   radius-inner="1.5" 
                   radius-outer="1.6" 
@@ -217,7 +301,6 @@
                   material="shader: flat">
           </a-ring>
           
-          <!-- Circle 2 -->
           <a-ring position="0 0 -3" 
                   radius-inner="1.5" 
                   radius-outer="1.6"  
@@ -226,7 +309,6 @@
                   material="shader: flat">
           </a-ring>
           
-          <!-- Circle 3 -->
           <a-ring position="0 0 -6" 
                   radius-inner="1.5"
                   radius-outer="1.6" 
@@ -235,7 +317,6 @@
                   material="shader: flat">
           </a-ring>
           
-          <!-- Circle 4 (Farthest) -->
           <a-ring position="0 0 -9" 
                   radius-inner="1.5" 
                   radius-outer="1.6" 
@@ -245,7 +326,7 @@
           </a-ring>
         </a-entity>
         
-        <!-- CENTER PATH - Line 1 (Outer left - darkest green) -->
+        <!-- CENTER PATH - Lines -->
         <a-box position="-0.6 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -254,7 +335,6 @@
                material="shader: flat; emissive: #008800; emissiveIntensity: 1.5">
         </a-box>
         
-        <!-- CENTER PATH - Line 2 (medium green) -->
         <a-box position="-0.3 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -263,7 +343,6 @@
                material="shader: flat; emissive: #00CC00; emissiveIntensity: 1.5">
         </a-box>
         
-        <!-- CENTER PATH - Line 3 (CENTER - brightest green) -->
         <a-box position="0 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -272,7 +351,6 @@
                material="shader: flat; emissive: #00FF00; emissiveIntensity: 2">
         </a-box>
         
-        <!-- CENTER PATH - Line 4 (medium green) -->
         <a-box position="0.3 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -281,7 +359,6 @@
                material="shader: flat; emissive: #00CC00; emissiveIntensity: 1.5">
         </a-box>
         
-        <!-- CENTER PATH - Line 5 (Outer right - darkest green) -->
         <a-box position="0.6 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -291,7 +368,7 @@
         </a-box>
         
         <!-- CENTER PATH - Grid markers -->
-        <a-entity id="gridMarkersG">
+        <a-entity>
           <a-sphere position="0 0.05 -5" radius="0.05" color="#00FF00" opacity="0.6"></a-sphere>
           <a-sphere position="0 0.05 -10" radius="0.05" color="#00FF00" opacity="0.6"></a-sphere>
           <a-sphere position="0 0.05 -15" radius="0.05" color="#00FF00" opacity="0.6"></a-sphere>
@@ -310,13 +387,11 @@
 
       <!-- ========================================== -->
       <!-- RIGHT PATHWAY - MOVEMENT (NEON BLUE) -->
-      <!-- Position: 2 (right side) -->
       <!-- ========================================== -->
       <a-entity id="pathwayMovement" class="pathway" position="3.5 0 0">
 
         <!-- RIGHT PATH - CONCENTRIC CIRCLES (BLUE) -->
         <a-entity id="circlesRight" position="0 1.6 -8">
-          <!-- Circle 1 (Closest) -->
           <a-ring position="0 0 0" 
                   radius-inner="1.5" 
                   radius-outer="1.6" 
@@ -325,7 +400,6 @@
                   material="shader: flat">
           </a-ring>
           
-          <!-- Circle 2 -->
           <a-ring position="0 0 -3" 
                   radius-inner="1.5" 
                   radius-outer="1.6"  
@@ -334,7 +408,6 @@
                   material="shader: flat">
           </a-ring>
           
-          <!-- Circle 3 -->
           <a-ring position="0 0 -6" 
                   radius-inner="1.5"
                   radius-outer="1.6" 
@@ -343,7 +416,6 @@
                   material="shader: flat">
           </a-ring>
           
-          <!-- Circle 4 (Farthest) -->
           <a-ring position="0 0 -9" 
                   radius-inner="1.5" 
                   radius-outer="1.6" 
@@ -353,7 +425,7 @@
           </a-ring>
         </a-entity>
         
-        <!-- RIGHT PATH - Line 1 (Outer left - darkest blue) -->
+        <!-- RIGHT PATH - Lines -->
         <a-box position="-0.6 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -362,7 +434,6 @@
                material="shader: flat; emissive: #000088; emissiveIntensity: 1.5">
         </a-box>
         
-        <!-- RIGHT PATH - Line 2 (medium blue) -->
         <a-box position="-0.3 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -371,7 +442,6 @@
                material="shader: flat; emissive: #0000CC; emissiveIntensity: 1.5">
         </a-box>
         
-        <!-- RIGHT PATH - Line 3 (CENTER - brightest blue) -->
         <a-box position="0 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -380,7 +450,6 @@
                material="shader: flat; emissive: #0000FF; emissiveIntensity: 2">
         </a-box>
         
-        <!-- RIGHT PATH - Line 4 (medium blue) -->
         <a-box position="0.3 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -389,7 +458,6 @@
                material="shader: flat; emissive: #0000CC; emissiveIntensity: 1.5">
         </a-box>
         
-        <!-- RIGHT PATH - Line 5 (Outer right - darkest blue) -->
         <a-box position="0.6 0.01 -10" 
                width="0.03" 
                height="0.03" 
@@ -399,7 +467,7 @@
         </a-box>
         
         <!-- RIGHT PATH - Grid markers -->
-        <a-entity id="gridMarkersB">
+        <a-entity>
           <a-sphere position="0 0.05 -5" radius="0.05" color="#0000FF" opacity="0.6"></a-sphere>
           <a-sphere position="0 0.05 -10" radius="0.05" color="#0000FF" opacity="0.6"></a-sphere>
           <a-sphere position="0 0.05 -15" radius="0.05" color="#0000FF" opacity="0.6"></a-sphere>
@@ -415,10 +483,10 @@
                 animation="property: position; to: 0 1.8 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 1000">
         </a-text>
       </a-entity>
+    </a-entity>
 
     <!-- ============================================ -->
     <!-- DATA FRAGMENTS CONTAINER -->
-    <!-- (Populated by JavaScript) -->
     <!-- ============================================ -->
     <a-entity id="dataFragmentsContainer"></a-entity>
 
@@ -426,7 +494,7 @@
     <!-- ENVIRONMENT -->
     <!-- ============================================ -->
     
-    <!-- Ground (Simple black plane) -->
+    <!-- Ground -->
     <a-plane position="0 0 0" 
              rotation="-90 0 0" 
              width="100" 
@@ -435,12 +503,95 @@
              material="shader: flat">
     </a-plane>
 
-    <!-- Sky (Black background) -->
+    <!-- Sky -->
     <a-sky color="#000000"></a-sky>
   </a-scene>
 
   <!-- ============================================ -->
-  <!-- JAVASCRIPT FILES -->
+  <!-- INTRO SEQUENCE JAVASCRIPT -->
+  <!-- ============================================ -->
+  <script>
+    // Intro sequence state management
+    document.addEventListener('DOMContentLoaded', function() {
+      const scene = document.querySelector('a-scene');
+      
+      scene.addEventListener('loaded', function() {
+        console.log('Scene loaded - Starting intro sequence');
+        
+        const titleScreen = document.querySelector('#titleScreen');
+        const beginButton = document.querySelector('#beginButton');
+        const instructionPanel = document.querySelector('#instructionPanel');
+        const continueButton = document.querySelector('#continueButton');
+        const pathwayHub = document.querySelector('#pathwayHub');
+        
+        // Step 1: Show BEGIN button after title animation (3 seconds)
+        setTimeout(() => {
+          console.log('Showing BEGIN button');
+          beginButton.setAttribute('visible', 'true');
+          // Fixed easing function
+          beginButton.setAttribute('animation', 'property: scale; from: 0 0 0; to: 1 1 1; dur: 500; easing: easeOutElastic');
+        }, 3000);
+        
+        // Step 2: BEGIN button click - hide title, show instructions
+        beginButton.addEventListener('click', function() {
+          console.log('BEGIN clicked - Showing instructions');
+          
+          // Hide title and BEGIN button
+          titleScreen.setAttribute('animation', 'property: opacity; to: 0; dur: 500');
+          beginButton.setAttribute('animation', 'property: scale; to: 0 0 0; dur: 500; easing: easeInCubic');
+          
+          setTimeout(() => {
+            titleScreen.setAttribute('visible', 'false');
+            beginButton.setAttribute('visible', 'false');
+            
+            // Show instruction panel
+            instructionPanel.setAttribute('visible', 'true');
+            instructionPanel.setAttribute('animation', 'property: scale; from: 0 0 0; to: 1 1 1; dur: 800; easing: easeOutElastic');
+          }, 500);
+        });
+        
+        // Step 3: CONTINUE button click - hide instructions, show pathways
+        continueButton.addEventListener('click', function() {
+          console.log('CONTINUE clicked - Showing pathways');
+          
+          // Hide instruction panel
+          instructionPanel.setAttribute('animation', 'property: scale; to: 0 0 0; dur: 500; easing: easeInCubic');
+          
+          setTimeout(() => {
+            instructionPanel.setAttribute('visible', 'false');
+            
+            // Show pathway hub
+            pathwayHub.setAttribute('visible', 'true');
+            pathwayHub.setAttribute('animation', 'property: opacity; from: 0; to: 1; dur: 1500');
+          }, 500);
+        });
+        
+        // Path selection handlers
+        const pathways = document.querySelectorAll('.pathway');
+        pathways.forEach(pathway => {
+          pathway.addEventListener('click', function() {
+            const pathId = this.id;
+            console.log('Selected pathway:', pathId);
+            
+            // Visual feedback
+            this.setAttribute('animation__select', {
+              property: 'scale',
+              to: '1.1 1.1 1.1',
+              dur: 300,
+              dir: 'alternate',
+              loop: 1
+            });
+            
+            // TODO: Transport user to selected path
+            alert('You selected: ' + pathId.replace('pathway', '') + ' path!\nTransport functionality coming soon...');
+          });
+        });
+      });
+    });
+  </script>
+
+  <!-- ============================================ -->
+  <!-- EXTERNAL JAVASCRIPT FILES -->
   <!-- ============================================ -->
   <script src="scene-manager.js"></script>
   <script src="player.js"></script>
@@ -449,7 +600,3 @@
   <script src="vr-scene.js"></script>
 </body>
 </html>
-
-
-  <!-- ======================TO DO====================== -->
-  <!-- When path is selected tranport user like in track -->

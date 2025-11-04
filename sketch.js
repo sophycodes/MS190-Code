@@ -62,7 +62,7 @@ function draw() {
   fill(0, 255, 70); // Green color
   textSize(20);
   textAlign(CENTER);
-  text('ENTER PASSWORD', width / 2, height / 2 - 80);
+  text("WHAT'S YOUR BEST KEPT SECRET", width / 2, height / 2 - 80);
   
   // Reset text settings for streams
   textSize(symbolSize);

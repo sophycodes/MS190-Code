@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Figaroa - Scene 2: Moon Rider Style (Fixed)</title>
+  <meta name="description" content="VR Cyberspace Experience">
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.0.0/dist/aframe-extras.min.js"></script>
+  <link rel="stylesheet" href="style-vr.css">
+</head>
+<body>
+  <a-scene background="color: #000000">
+    
+    <!-- ============================================ -->
+    <!-- CAMERA & PLAYER -->
+    <!-- ============================================ -->
+    <a-entity id="player" position="0.0 0.0 4.8">
+      <a-camera>
+        <a-cursor color="#00FFFF"></a-cursor>
+      </a-camera>
+      
+      <!-- VR Controllers / Hands -->
+      <a-entity id="leftHand" 
+                hand-controls="hand: left; handModelStyle: lowPoly; color: #00FFFF"
+                position="-0.3 0 -0.5">
+      </a-entity>
+      
+      <a-entity id="rightHand" 
+                hand-controls="hand: right; handModelStyle: lowPoly; color: #00FFFF"
+                position="0.3 0 -0.5">
+      </a-entity>
+    </a-entity>
+
+    <!-- ============================================ -->
+    <!-- LIGHTING -->
+    <!-- ============================================ -->
+    <!-- Ambient Lighting (overall brightness) -->
+    <a-entity light="type: ambient; color: #222; intensity: 0.4"></a-entity>
+    
+    <!-- Point Light: LEFT PATH (R) -->
+    <a-entity light="type: point; color: #FF0000; intensity: 2; distance: 20" 
+              position="-4 2 -10"></a-entity>
+    
+    <!-- Point Light: CENTER PATH (G) -->
+    <a-entity light="type: point; color: #00FF00; intensity: 2; distance: 20" 
+              position="0 2 -10"></a-entity>
+    
+    <!-- Point Light: RIGHT PATH (B) -->
+    <a-entity light="type: point; color: #0000FF; intensity: 2; distance: 20" 
+              position="4 2 -10"></a-entity>
+
+    <!-- ============================================ -->
+    <!-- BEGIN BUTTON -->
+    <!-- ============================================ -->
+    <a-entity id="beginButton" position="0 0.5 -3" class="clickable">
+      <!-- Button box -->
+      <a-box width="1.5" 
+             height="0.5" 
+             depth="0.1" 
+             color="#1a1a1a"
+             material="shader: flat; transparent: true; opacity: 0.8">
+        <!-- Neon border -->
+        <a-box width="1.52" height="0.52" depth="0.08" 
+               color="#00FFFF" 
+               opacity="0.3"
+               position="0 0 -0.01">
+        </a-box>
+      </a-box>
+      
+      <!-- BEGIN text -->
+      <a-text value="BEGIN" 
+              position="0 0 0.06" 
+              align="center" 
+              color="#FFFFFF"
+              width="3"
+              shader="flat">
+      </a-text>
+      
+      <!-- Glow effect -->
+      <!-- <a-ring position="0 0 -0.1" 
+              radius-inner="0.8" 
+              radius-outer="1" 
+              color="#00FFFF"
+              opacity="0.3"
+              material="shader: flat"
+              animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 1500">
+      </a-ring> -->
+    </a-entity>
+
+    <!-- ============================================ -->
+    <!-- PATHWAY HUB -->
+    <!-- ============================================ -->
+      
+      <!-- ========================================== -->
+      <!-- LEFT PATHWAY - TEXT (NEON RED) -->
+      <!-- Position: -2 (left side) -->
+      <!-- ========================================== -->
+      <a-entity id="pathwayText" class="pathway" position="-3.5 0 0">
+        
+        <!-- LEFT PATH - CONCENTRIC CIRCLES (RED) -->
+        <a-entity id="circlesLeft" position="0 1.6 -8">
+          <!-- Circle 1 (Closest) -->
+          <a-ring position="0 0 0" 
+                  radius-inner="1.5" 
+                  radius-outer="1.6" 
+                  color="#FF0000"
+                  opacity="0.3"
+                  material="shader: flat">
+          </a-ring>
+          
+          <!-- Circle 2 -->
+          <a-ring position="0 0 -3" 
+                  radius-inner="1.5" 
+                  radius-outer="1.6"  
+                  color="#FF0000"
+                  opacity="0.2"
+                  material="shader: flat">
+          </a-ring>
+          
+          <!-- Circle 3 -->
+          <a-ring position="0 0 -6" 
+                  radius-inner="1.5"
+                  radius-outer="1.6" 
+                  color="#FF0000"
+                  opacity="0.15"
+                  material="shader: flat">
+          </a-ring>
+          
+          <!-- Circle 4 (Farthest) -->
+          <a-ring position="0 0 -9" 
+                  radius-inner="1.5" 
+                  radius-outer="1.6" 
+                  color="#FF0000"
+                  opacity="0.1"
+                  material="shader: flat">
+          </a-ring>
+        </a-entity>
+        
+        <!-- LEFT PATH - Line 1 (Outer left - darkest red) -->
+        <a-box position="-0.6 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#880000"
+               material="shader: flat; emissive: #880000; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- LEFT PATH - Line 2 (medium red) -->
+        <a-box position="-0.3 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#CC0000"
+               material="shader: flat; emissive: #CC0000; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- LEFT PATH - Line 3 (CENTER - brightest red) -->
+        <a-box position="0 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#FF0000"
+               material="shader: flat; emissive: #FF0000; emissiveIntensity: 2">
+        </a-box>
+        
+        <!-- LEFT PATH - Line 4 (medium red) -->
+        <a-box position="0.3 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#CC0000"
+               material="shader: flat; emissive: #CC0000; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- LEFT PATH - Line 5 (Outer right - darkest red) -->
+        <a-box position="0.6 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#880000"
+               material="shader: flat; emissive: #880000; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- LEFT PATH - Grid markers (dots along path) -->
+        <a-entity id="gridMarkersR">
+          <a-sphere position="0 0.05 -5" radius="0.05" color="#FF0000" opacity="0.6"></a-sphere>
+          <a-sphere position="0 0.05 -10" radius="0.05" color="#FF0000" opacity="0.6"></a-sphere>
+          <a-sphere position="0 0.05 -15" radius="0.05" color="#FF0000" opacity="0.6"></a-sphere>
+        </a-entity>
+        
+        <!-- LEFT PATH - Floating text label -->
+        <a-text value="TEXT" 
+                position="0 1.5 -2" 
+                align="center" 
+                color="#FF0000"
+                width="4"
+                shader="flat"
+                animation="property: position; to: 0 1.8 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+        </a-text>
+      </a-entity>
+
+      <!-- ========================================== -->
+      <!-- CENTER PATHWAY - AUDIO (NEON GREEN) -->
+      <!-- Position: 0 (center) -->
+      <!-- ========================================== -->
+      <a-entity id="pathwayAudio" class="pathway" position="0 0 0">
+
+
+        <!-- CENTER PATH - CONCENTRIC CIRCLES (GREEN) -->
+        <a-entity id="circlesCenter" position="0 1.6 -8">
+          <!-- Circle 1 (Closest) -->
+          <a-ring position="0 0 0" 
+                  radius-inner="1.5" 
+                  radius-outer="1.6" 
+                  color="#00FF00"
+                  opacity="0.3"
+                  material="shader: flat">
+          </a-ring>
+          
+          <!-- Circle 2 -->
+          <a-ring position="0 0 -3" 
+                  radius-inner="1.5" 
+                  radius-outer="1.6"  
+                  color="#00FF00"
+                  opacity="0.2"
+                  material="shader: flat">
+          </a-ring>
+          
+          <!-- Circle 3 -->
+          <a-ring position="0 0 -6" 
+                  radius-inner="1.5"
+                  radius-outer="1.6" 
+                  color="#00FF00"
+                  opacity="0.15"
+                  material="shader: flat">
+          </a-ring>
+          
+          <!-- Circle 4 (Farthest) -->
+          <a-ring position="0 0 -9" 
+                  radius-inner="1.5" 
+                  radius-outer="1.6" 
+                  color="#00FF00"
+                  opacity="0.1"
+                  material="shader: flat">
+          </a-ring>
+        </a-entity>
+        
+        <!-- CENTER PATH - Line 1 (Outer left - darkest green) -->
+        <a-box position="-0.6 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#008800"
+               material="shader: flat; emissive: #008800; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- CENTER PATH - Line 2 (medium green) -->
+        <a-box position="-0.3 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#00CC00"
+               material="shader: flat; emissive: #00CC00; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- CENTER PATH - Line 3 (CENTER - brightest green) -->
+        <a-box position="0 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#00FF00"
+               material="shader: flat; emissive: #00FF00; emissiveIntensity: 2">
+        </a-box>
+        
+        <!-- CENTER PATH - Line 4 (medium green) -->
+        <a-box position="0.3 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#00CC00"
+               material="shader: flat; emissive: #00CC00; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- CENTER PATH - Line 5 (Outer right - darkest green) -->
+        <a-box position="0.6 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#008800"
+               material="shader: flat; emissive: #008800; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- CENTER PATH - Grid markers -->
+        <a-entity id="gridMarkersG">
+          <a-sphere position="0 0.05 -5" radius="0.05" color="#00FF00" opacity="0.6"></a-sphere>
+          <a-sphere position="0 0.05 -10" radius="0.05" color="#00FF00" opacity="0.6"></a-sphere>
+          <a-sphere position="0 0.05 -15" radius="0.05" color="#00FF00" opacity="0.6"></a-sphere>
+        </a-entity>
+        
+        <!-- CENTER PATH - Floating text label -->
+        <a-text value="AUDIO" 
+                position="0 1.5 -2" 
+                align="center" 
+                color="#00FF00"
+                width="4"
+                shader="flat"
+                animation="property: position; to: 0 1.8 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 500">
+        </a-text>
+      </a-entity>
+
+      <!-- ========================================== -->
+      <!-- RIGHT PATHWAY - MOVEMENT (NEON BLUE) -->
+      <!-- Position: 2 (right side) -->
+      <!-- ========================================== -->
+      <a-entity id="pathwayMovement" class="pathway" position="3.5 0 0">
+
+        <!-- RIGHT PATH - CONCENTRIC CIRCLES (BLUE) -->
+        <a-entity id="circlesRight" position="0 1.6 -8">
+          <!-- Circle 1 (Closest) -->
+          <a-ring position="0 0 0" 
+                  radius-inner="1.5" 
+                  radius-outer="1.6" 
+                  color="#0000FF"
+                  opacity="0.3"
+                  material="shader: flat">
+          </a-ring>
+          
+          <!-- Circle 2 -->
+          <a-ring position="0 0 -3" 
+                  radius-inner="1.5" 
+                  radius-outer="1.6"  
+                  color="#0000FF"
+                  opacity="0.2"
+                  material="shader: flat">
+          </a-ring>
+          
+          <!-- Circle 3 -->
+          <a-ring position="0 0 -6" 
+                  radius-inner="1.5"
+                  radius-outer="1.6" 
+                  color="#0000FF"
+                  opacity="0.15"
+                  material="shader: flat">
+          </a-ring>
+          
+          <!-- Circle 4 (Farthest) -->
+          <a-ring position="0 0 -9" 
+                  radius-inner="1.5" 
+                  radius-outer="1.6" 
+                  color="#0000FF"
+                  opacity="0.1"
+                  material="shader: flat">
+          </a-ring>
+        </a-entity>
+        
+        <!-- RIGHT PATH - Line 1 (Outer left - darkest blue) -->
+        <a-box position="-0.6 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#000088"
+               material="shader: flat; emissive: #000088; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- RIGHT PATH - Line 2 (medium blue) -->
+        <a-box position="-0.3 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#0000CC"
+               material="shader: flat; emissive: #0000CC; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- RIGHT PATH - Line 3 (CENTER - brightest blue) -->
+        <a-box position="0 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#0000FF"
+               material="shader: flat; emissive: #0000FF; emissiveIntensity: 2">
+        </a-box>
+        
+        <!-- RIGHT PATH - Line 4 (medium blue) -->
+        <a-box position="0.3 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#0000CC"
+               material="shader: flat; emissive: #0000CC; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- RIGHT PATH - Line 5 (Outer right - darkest blue) -->
+        <a-box position="0.6 0.01 -10" 
+               width="0.03" 
+               height="0.03" 
+               depth="20" 
+               color="#000088"
+               material="shader: flat; emissive: #000088; emissiveIntensity: 1.5">
+        </a-box>
+        
+        <!-- RIGHT PATH - Grid markers -->
+        <a-entity id="gridMarkersB">
+          <a-sphere position="0 0.05 -5" radius="0.05" color="#0000FF" opacity="0.6"></a-sphere>
+          <a-sphere position="0 0.05 -10" radius="0.05" color="#0000FF" opacity="0.6"></a-sphere>
+          <a-sphere position="0 0.05 -15" radius="0.05" color="#0000FF" opacity="0.6"></a-sphere>
+        </a-entity>
+        
+        <!-- RIGHT PATH - Floating text label -->
+        <a-text value="MOVEMENT" 
+                position="0 1.5 -2" 
+                align="center" 
+                color="#0000FF"
+                width="4"
+                shader="flat"
+                animation="property: position; to: 0 1.8 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 1000">
+        </a-text>
+      </a-entity>
+
+    <!-- ============================================ -->
+    <!-- DATA FRAGMENTS CONTAINER -->
+    <!-- (Populated by JavaScript) -->
+    <!-- ============================================ -->
+    <a-entity id="dataFragmentsContainer"></a-entity>
+
+    <!-- ============================================ -->
+    <!-- ENVIRONMENT -->
+    <!-- ============================================ -->
+    
+    <!-- Ground (Simple black plane) -->
+    <a-plane position="0 0 0" 
+             rotation="-90 0 0" 
+             width="100" 
+             height="100" 
+             color="#000000"
+             material="shader: flat">
+    </a-plane>
+
+    <!-- Sky (Black background) -->
+    <a-sky color="#000000"></a-sky>
+  </a-scene>
+
+  <!-- ============================================ -->
+  <!-- JAVASCRIPT FILES -->
+  <!-- ============================================ -->
+  <script src="scene-manager.js"></script>
+  <script src="player.js"></script>
+  <script src="pathways.js"></script>
+  <script src="data-fragments.js"></script>
+  <script src="vr-scene.js"></script>
+</body>
+</html>
+
+
+  <!-- ======================TO DO====================== -->
+  <!-- When path is selected tranport user like in track -->

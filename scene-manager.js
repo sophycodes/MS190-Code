@@ -2,10 +2,12 @@
  * scene-manager.js - Manages scene states and transitions
  */
 
-// ============================================
-// A-FRAME COMPONENTS (Add these at the top)
-// ============================================
 console.log('=== scene-manager.js FILE LOADED ===');
+
+// ============================================
+// A-FRAME COMPONENTS
+// ============================================
+
 /**
  * Scene Manager Component - handles switching between different environments
  */
@@ -16,9 +18,7 @@ AFRAME.registerComponent('scene-manager', {
   },
   
   init: function() {
-    console.log('>>> INIT FUNCTION CALLED <<<');  // Add this line
-    console.log('Scene element:', this.el);         // Add this line
-    console.log('Schema data:', this.data);         // Add this line
+    console.log('>>> SCENE MANAGER INIT <<<');
     this.scenes = {};
     const data = this.data;
     
@@ -32,7 +32,7 @@ AFRAME.registerComponent('scene-manager', {
       }
     });
     
-    console.log('Scene Manager Component initialized with scenes:', Object.keys(this.scenes));
+    console.log('Scene Manager initialized with scenes:', Object.keys(this.scenes));
   },
   
   switchScene: function(sceneName) {
@@ -51,7 +51,7 @@ AFRAME.registerComponent('scene-manager', {
       // Emit event for other systems to react
       this.el.emit('sceneChanged', {newScene: sceneName});
       
-      // Update your existing SceneManager state
+      // Update SceneManager state
       if (sceneName === 'intro') {
         SceneManager.currentState = 'PATHWAY_SELECTION';
       } else {
@@ -76,6 +76,7 @@ AFRAME.registerComponent('portal-button', {
   },
   
   init: function() {
+    console.log('>>> PORTAL BUTTON INIT <<<', this.el.id, 'target:', this.data.target); // DEBUG
     const data = this.data;
     
     // Add cursor interaction
@@ -83,6 +84,7 @@ AFRAME.registerComponent('portal-button', {
     
     // Handle click
     this.onClick = () => {
+      console.log('>>> PORTAL CLICKED <<<', data.target); // DEBUG
       const sceneManager = document.querySelector('[scene-manager]');
       
       if (sceneManager && sceneManager.components['scene-manager']) {
@@ -96,6 +98,7 @@ AFRAME.registerComponent('portal-button', {
     
     // Add hover effect
     this.onMouseEnter = () => {
+      console.log('>>> PORTAL HOVER <<<', this.el.id); // DEBUG
       this.el.setAttribute('scale', '1.1 1.1 1.1');
     };
     
@@ -134,7 +137,7 @@ AFRAME.registerComponent('grid-floor', {
       data.colorCenterLine, 
       data.colorGrid
     );
-    grid.rotation.x = Math.PI / 2; // Rotate to be horizontal floor
+
     this.el.setObject3D('grid', grid);
   },
   
@@ -142,54 +145,404 @@ AFRAME.registerComponent('grid-floor', {
     this.el.removeObject3D('grid');
   }
 });
-
 console.log('grid-floor component registered');
 
-// At the very end of scene-manager.js, add:
-setTimeout(() => {
-  console.log('=== CHECKING SCENE STRUCTURE ===');
-  console.log('intro-scene:', document.querySelector('#intro-scene'));
-  console.log('text-scene:', document.querySelector('#text-scene'));
-  console.log('audio-scene:', document.querySelector('#audio-scene'));
-  console.log('movement-scene:', document.querySelector('#movement-scene'));
-  console.log('Scene with scene-manager attr:', document.querySelector('[scene-manager]'));
-}, 3000);
 
+/**
+ * VR Keyboard Component - Creates an on-screen keyboard for text input
+ */
+AFRAME.registerComponent('vr-keyboard', {
+  schema: {
+    target: {type: 'string'},
+    questionId: {type: 'string'},
+    questionText: {type: 'string'}
+  },
+  
+  init: function() {
+    this.inputText = '';
+    this.keyboard = null;
+    this.createKeyboard();
+  },
+  
+  createKeyboard: function() {
+    const container = document.createElement('a-entity');
+    container.setAttribute('position', '0 1.8 -2');
+    container.setAttribute('visible', 'false');
+    this.keyboard = container;
+    
+    // Dark background panel
+    const panel = document.createElement('a-plane');
+    panel.setAttribute('width', '6');
+    panel.setAttribute('height', '4');
+    panel.setAttribute('color', '#000000');
+    panel.setAttribute('opacity', '0.9');
+    container.appendChild(panel);
+    
+    // Glow border
+    const border = document.createElement('a-plane');
+    border.setAttribute('width', '6.2');
+    border.setAttribute('height', '4.2');
+    border.setAttribute('position', '0 0 -0.01');
+    border.setAttribute('color', '#ff0000');
+    border.setAttribute('opacity', '0.4');
+    border.setAttribute('material', 'shader: flat; emissive: #ff0000; emissiveIntensity: 2');
+    container.appendChild(border);
+    
+    // Title
+    const title = document.createElement('a-text');
+    title.setAttribute('value', 'TYPE YOUR RESPONSE');
+    title.setAttribute('align', 'center');
+    title.setAttribute('position', '0 1.6 0.01');
+    title.setAttribute('color', '#ff0000');
+    title.setAttribute('width', '4');
+    container.appendChild(title);
+    
+    // Display area for typed text
+    const display = document.createElement('a-plane');
+    display.setAttribute('width', '5.5');
+    display.setAttribute('height', '0.6');
+    display.setAttribute('position', '0 1.1 0.01');
+    display.setAttribute('color', '#1a1a1a');
+    container.appendChild(display);
+    
+    const displayText = document.createElement('a-text');
+    displayText.setAttribute('id', 'keyboard-display');
+    displayText.setAttribute('value', '');
+    displayText.setAttribute('align', 'center');
+    displayText.setAttribute('position', '0 1.1 0.02');
+    displayText.setAttribute('color', '#ffffff');
+    displayText.setAttribute('width', '5');
+    displayText.setAttribute('wrap-count', '35');
+    container.appendChild(displayText);
+    
+    // Keyboard layout
+    const keys = [
+      ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+      ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+      ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+    ];
+    
+    let yPos = 0.5;
+    keys.forEach((row, rowIndex) => {
+      const xOffset = rowIndex * 0.25; // Stagger rows
+      row.forEach((key, colIndex) => {
+        const xPos = (colIndex - row.length / 2) * 0.5 + xOffset;
+        this.createKey(key, xPos, yPos, container);
+      });
+      yPos -= 0.5;
+    });
+    
+    // Space bar
+    this.createKey('SPACE', 0, yPos - 0.2, container, 3, 0.4);
+    
+    // Backspace
+    this.createKey('←', -2.5, 0.5, container, 0.8, 0.4);
+    
+    // Submit button
+    const submitBtn = this.createKey('SUBMIT', 2, yPos - 0.2, container, 1.5, 0.5);
+    submitBtn.setAttribute('class', 'clickable submit-key');
+    
+    // Close button
+    const closeBtn = this.createKey('CLOSE', 2.5, 1.6, container, 0.8, 0.4);
+    closeBtn.setAttribute('class', 'clickable close-key');
+    
+    document.querySelector('a-scene').appendChild(container);
+  },
+  
+  createKey: function(label, x, y, parent, width = 0.4, height = 0.4) {
+    const key = document.createElement('a-entity');
+    key.setAttribute('position', `${x} ${y} 0.01`);
+    key.setAttribute('class', 'clickable keyboard-key');
+    key.setAttribute('data-key', label);
+    
+    const keyBg = document.createElement('a-box');
+    keyBg.setAttribute('width', width);
+    keyBg.setAttribute('height', height);
+    keyBg.setAttribute('depth', '0.05');
+    keyBg.setAttribute('color', '#ff0000');
+    keyBg.setAttribute('opacity', '0.8');
+    key.appendChild(keyBg);
+    
+    const keyText = document.createElement('a-text');
+    keyText.setAttribute('value', label);
+    keyText.setAttribute('align', 'center');
+    keyText.setAttribute('position', `0 0 0.03`);
+    keyText.setAttribute('color', '#000000');
+    keyText.setAttribute('width', width * 2);
+    key.appendChild(keyText);
+    
+    // Click handler
+    key.addEventListener('click', () => {
+      this.handleKeyPress(label);
+    });
+    
+    parent.appendChild(key);
+    return key;
+  },
+  
+  handleKeyPress: function(key) {
+    console.log('Key pressed:', key);
+    const display = document.querySelector('#keyboard-display');
+    
+    if (key === 'SUBMIT') {
+      if (this.inputText.trim()) {
+        this.submitResponse();
+      }
+    } else if (key === 'CLOSE') {
+      this.close();
+    } else if (key === '←') {
+      this.inputText = this.inputText.slice(0, -1);
+      display.setAttribute('value', this.inputText);
+    } else if (key === 'SPACE') {
+      this.inputText += ' ';
+      display.setAttribute('value', this.inputText);
+    } else {
+      this.inputText += key.toLowerCase();
+      display.setAttribute('value', this.inputText);
+    }
+  },
+  
+  show: function() {
+    this.inputText = '';
+    document.querySelector('#keyboard-display').setAttribute('value', '');
+    this.keyboard.setAttribute('visible', 'true');
+  },
+  
+  close: function() {
+    this.keyboard.setAttribute('visible', 'false');
+    this.inputText = '';
+  },
+  
+  submitResponse: function() {
+    console.log('Submitting response:', this.inputText);
+    
+    // Find the responses container
+    const container = document.querySelector(`#responses-${this.data.questionId}`);
+    if (!container) {
+      console.warn('Response container not found');
+      return;
+    }
+    
+    // Create sticky note
+    this.createStickyNote(this.inputText, container);
+    
+    // Close keyboard
+    this.close();
+  },
+  
+  createStickyNote: function(text, container) {
+    const note = document.createElement('a-entity');
+    
+    // Random position (scattered around the corner)
+    const x = (Math.random() - 0.5) * 10;
+    const y = Math.random() * 3 + 1;
+    const z = Math.random() * 5 - 2;
+    note.setAttribute('position', `${x} ${y} ${z}`);
+    
+    // Random rotation for organic placement
+    const rotZ = (Math.random() - 0.5) * 15;
+    note.setAttribute('rotation', `0 0 ${rotZ}`);
+    
+    // Main background panel (dark)
+    const noteBg = document.createElement('a-plane');
+    noteBg.setAttribute('width', '2.5');
+    noteBg.setAttribute('height', '1.5');
+    noteBg.setAttribute('color', '#000000');
+    noteBg.setAttribute('opacity', '0.85');
+    note.appendChild(noteBg);
+    
+    // Neon red border frame
+    const border = document.createElement('a-plane');
+    border.setAttribute('width', '2.55');
+    border.setAttribute('height', '1.55');
+    border.setAttribute('position', '0 0 -0.01');
+    border.setAttribute('color', '#ff0000');
+    border.setAttribute('opacity', '0.6');
+    border.setAttribute('material', 'shader: flat; emissive: #ff0000; emissiveIntensity: 2');
+    note.appendChild(border);
+    
+    // Corner accents (top-left)
+    const cornerTL = document.createElement('a-box');
+    cornerTL.setAttribute('width', '0.3');
+    cornerTL.setAttribute('height', '0.05');
+    cornerTL.setAttribute('depth', '0.01');
+    cornerTL.setAttribute('position', '-1.1 0.7 0.01');
+    cornerTL.setAttribute('color', '#ff0000');
+    cornerTL.setAttribute('material', 'shader: flat; emissive: #ff0000; emissiveIntensity: 3');
+    note.appendChild(cornerTL);
+    
+    // Corner accents (top-right)
+    const cornerTR = document.createElement('a-box');
+    cornerTR.setAttribute('width', '0.3');
+    cornerTR.setAttribute('height', '0.05');
+    cornerTR.setAttribute('depth', '0.01');
+    cornerTR.setAttribute('position', '1.1 0.7 0.01');
+    cornerTR.setAttribute('color', '#ff0000');
+    cornerTR.setAttribute('material', 'shader: flat; emissive: #ff0000; emissiveIntensity: 3');
+    note.appendChild(cornerTR);
+    
+    // Corner accents (bottom-left)
+    const cornerBL = document.createElement('a-box');
+    cornerBL.setAttribute('width', '0.3');
+    cornerBL.setAttribute('height', '0.05');
+    cornerBL.setAttribute('depth', '0.01');
+    cornerBL.setAttribute('position', '-1.1 -0.7 0.01');
+    cornerBL.setAttribute('color', '#ff0000');
+    cornerBL.setAttribute('material', 'shader: flat; emissive: #ff0000; emissiveIntensity: 3');
+    note.appendChild(cornerBL);
+    
+    // Corner accents (bottom-right)
+    const cornerBR = document.createElement('a-box');
+    cornerBR.setAttribute('width', '0.3');
+    cornerBR.setAttribute('height', '0.05');
+    cornerBR.setAttribute('depth', '0.01');
+    cornerBR.setAttribute('position', '1.1 -0.7 0.01');
+    cornerBR.setAttribute('color', '#ff0000');
+    cornerBR.setAttribute('material', 'shader: flat; emissive: #ff0000; emissiveIntensity: 3');
+    note.appendChild(cornerBR);
+    
+    // Vertical corner lines (left)
+    const vertL = document.createElement('a-box');
+    vertL.setAttribute('width', '0.05');
+    vertL.setAttribute('height', '0.3');
+    vertL.setAttribute('depth', '0.01');
+    vertL.setAttribute('position', '-1.23 0.7 0.01');
+    vertL.setAttribute('color', '#ff0000');
+    vertL.setAttribute('material', 'shader: flat; emissive: #ff0000; emissiveIntensity: 3');
+    note.appendChild(vertL);
+    
+    // Vertical corner lines (right)
+    const vertR = document.createElement('a-box');
+    vertR.setAttribute('width', '0.05');
+    vertR.setAttribute('height', '0.3');
+    vertR.setAttribute('depth', '0.01');
+    vertR.setAttribute('position', '1.23 -0.7 0.01');
+    vertR.setAttribute('color', '#ff0000');
+    vertR.setAttribute('material', 'shader: flat; emissive: #ff0000; emissiveIntensity: 3');
+    note.appendChild(vertR);
+    
+    // Diagonal accent lines (top)
+    for (let i = 0; i < 3; i++) {
+      const diag = document.createElement('a-box');
+      diag.setAttribute('width', '0.15');
+      diag.setAttribute('height', '0.03');
+      diag.setAttribute('depth', '0.01');
+      diag.setAttribute('position', `${0.3 + i * 0.15} 0.65 0.01`);
+      diag.setAttribute('rotation', '0 0 -45');
+      diag.setAttribute('color', '#ff0000');
+      diag.setAttribute('material', 'shader: flat; emissive: #ff0000; emissiveIntensity: 2.5');
+      note.appendChild(diag);
+    }
+    
+    // Diagonal accent lines (bottom)
+    for (let i = 0; i < 3; i++) {
+      const diag = document.createElement('a-box');
+      diag.setAttribute('width', '0.15');
+      diag.setAttribute('height', '0.03');
+      diag.setAttribute('depth', '0.01');
+      diag.setAttribute('position', `${-0.3 - i * 0.15} -0.65 0.01`);
+      diag.setAttribute('rotation', '0 0 -45');
+      diag.setAttribute('color', '#ff0000');
+      diag.setAttribute('material', 'shader: flat; emissive: #ff0000; emissiveIntensity: 2.5');
+      note.appendChild(diag);
+    }
+    
+    // Text on note (red cyberpunk style)
+    const noteText = document.createElement('a-text');
+    noteText.setAttribute('value', text);
+    noteText.setAttribute('align', 'center');
+    noteText.setAttribute('position', '0 0 0.02');
+    noteText.setAttribute('color', '#ff0000');
+    noteText.setAttribute('width', '2');
+    noteText.setAttribute('wrap-count', '20');
+    noteText.setAttribute('line-height', '45');
+    note.appendChild(noteText);
+    
+    // Appear animation with glitch effect
+    note.setAttribute('scale', '0 0 0');
+    note.setAttribute('animation', {
+      property: 'scale',
+      to: '1 1 1',
+      dur: 500,
+      easing: 'easeOutBack'
+    });
+    
+    // Optional: Subtle pulsing glow
+    note.setAttribute('animation__pulse', {
+      property: 'rotation',
+      to: `0 0 ${rotZ + 2}`,
+      dir: 'alternate',
+      loop: true,
+      dur: 3000,
+      easing: 'easeInOutSine'
+    });
+    
+    container.appendChild(note);
+  }
+});
+console.log('vr-keyboard component registered');
+
+console.log('vr-keyboard component registered');
+
+/**
+ * Question Responder Component - Opens VR keyboard when RESPOND button is clicked
+ */
+AFRAME.registerComponent('question-responder', {
+  schema: {
+    questionId: {type: 'string', default: 'question'},
+    questionText: {type: 'string', default: 'Question?'}
+  },
+  
+  init: function() {
+    console.log('>>> QUESTION RESPONDER INIT <<<', this.data.questionId);
+    const data = this.data;
+    
+    // Create keyboard instance for this question
+    const keyboard = document.createElement('a-entity');
+    keyboard.setAttribute('vr-keyboard', {
+      questionId: data.questionId,
+      questionText: data.questionText
+    });
+    document.querySelector('a-scene').appendChild(keyboard);
+    
+    // Wait for the vr-keyboard component to initialize
+    keyboard.addEventListener('componentinitialized', (evt) => {
+      if (evt.detail.name === 'vr-keyboard') {
+        console.log('Keyboard component ready for', data.questionId);
+        this.keyboardComponent = keyboard.components['vr-keyboard'];
+      }
+    });
+    
+    // Click handler
+    this.el.addEventListener('click', () => {
+      console.log('>>> RESPOND BUTTON CLICKED <<<', data.questionId);
+      
+      if (this.keyboardComponent) {
+        console.log('Showing keyboard...');
+        this.keyboardComponent.show();
+      } else {
+        console.warn('Keyboard component not ready yet!');
+      }
+    });
+  }
+});
+console.log('question-responder component registered');
 
 
 // ============================================
-// YOUR EXISTING SCENEMANAGER OBJECT (Modified)
+// SCENEMANAGER OBJECT
 // ============================================
 
 const SceneManager = {
-  currentState: 'PATHWAY_SELECTION', // PATHWAY_SELECTION, IN_REALM, COLLECTING
-  currentPathway: null, // Store which pathway user is in
+  currentState: 'PATHWAY_SELECTION',
+  currentPathway: null,
   
   init: function() {
-    console.log('SceneManager initialized');
+    console.log('SceneManager object initialized');
     this.setupEventListeners();
   },
   
   setupEventListeners: function() {
-    // Get pathway elements
-    const pathways = document.querySelectorAll('.pathway');
-    pathways.forEach(pathway => {
-      // Click/gaze interaction for pathway selection
-      pathway.addEventListener('click', (e) => {
-        const pathwayId = pathway.id; // Use pathway.id instead of e.target.id
-        this.handlePathwaySelection(pathwayId);
-      });
-      
-      // Note: Hover effects are now handled by portal-button component
-      // But we can keep these if you want additional effects
-      pathway.addEventListener('mouseenter', (e) => {
-        // Additional hover effect if desired
-      });
-      pathway.addEventListener('mouseleave', (e) => {
-        // Additional hover effect if desired
-      });
-    });
-    
     // Listen for scene changes
     const sceneEl = document.querySelector('a-scene');
     sceneEl.addEventListener('sceneChanged', (e) => {
@@ -198,106 +551,13 @@ const SceneManager = {
     });
   },
   
-  handlePathwaySelection: function(pathwayId) {
-    let pathwayType = null;
-    
-    switch(pathwayId) {
-      case 'pathwayText':
-        pathwayType = 'TEXT';
-        break;
-      case 'pathwayAudio':
-        pathwayType = 'AUDIO';
-        break;
-      case 'pathwayMovement':
-        pathwayType = 'MOVEMENT';
-        break;
-    }
-    
-    if (pathwayType) {
-      console.log(`Selected ${pathwayType} pathway`);
-      // The portal-button component will handle the actual scene switch
-      // But we can do any additional setup here
-    }
-  },
-  
   onSceneChanged: function(newScene) {
-    // Called when scene actually changes
     if (newScene === 'intro') {
       this.currentState = 'PATHWAY_SELECTION';
       this.currentPathway = null;
     } else {
       this.currentState = 'IN_REALM';
       this.currentPathway = newScene.toUpperCase();
-      
-      // Start spawning data fragments when entering a realm
-      if (typeof DataFragments !== 'undefined') {
-        DataFragments.startSpawning(this.currentPathway);
-      }
-    }
-  },
-  
-  // You can keep these methods for additional environment setup if needed
-  addTextEnvironment: function() {
-    console.log('Setting up TEXT environment');
-    // Add floating text elements in the distance
-    const container = document.querySelector('#dataFragmentsContainer');
-    for (let i = 0; i < 10; i++) {
-      const textElement = document.createElement('a-text');
-      textElement.setAttribute('value', 'DATA');
-      textElement.setAttribute('color', '#FF0000');
-      textElement.setAttribute('position', {
-        x: Math.random() * 20 - 10,
-        y: Math.random() * 10,
-        z: Math.random() * -20 - 10
-      });
-      textElement.setAttribute('scale', '3 3 3');
-      textElement.setAttribute('opacity', '0.3');
-      container.appendChild(textElement);
-    }
-  },
-  
-  addAudioEnvironment: function() {
-    console.log('Setting up AUDIO environment');
-    // Add pulsing audio visualizers
-    const container = document.querySelector('#dataFragmentsContainer');
-    for (let i = 0; i < 15; i++) {
-      const audioViz = document.createElement('a-sphere');
-      audioViz.setAttribute('radius', '0.5');
-      audioViz.setAttribute('color', '#00FF00');
-      audioViz.setAttribute('position', {
-        x: Math.random() * 20 - 10,
-        y: Math.random() * 10,
-        z: Math.random() * -20 - 10
-      });
-      audioViz.setAttribute('opacity', '0.5');
-      audioViz.setAttribute('animation', {
-        property: 'scale',
-        to: '1.5 1.5 1.5',
-        dir: 'alternate',
-        loop: true,
-        dur: 1000 + Math.random() * 1000
-      });
-      container.appendChild(audioViz);
-    }
-  },
-  
-  addMovementEnvironment: function() {
-    console.log('Setting up MOVEMENT environment');
-    // Add particle trails
-    const container = document.querySelector('#dataFragmentsContainer');
-    for (let i = 0; i < 20; i++) {
-      const trail = document.createElement('a-box');
-      trail.setAttribute('width', '0.1');
-      trail.setAttribute('height', '2');
-      trail.setAttribute('depth', '0.1');
-      trail.setAttribute('color', '#0000FF');
-      trail.setAttribute('position', {
-        x: Math.random() * 20 - 10,
-        y: Math.random() * 10,
-        z: Math.random() * -20 - 10
-      });
-      trail.setAttribute('opacity', '0.4');
-      container.appendChild(trail);
     }
   },
   
@@ -305,12 +565,6 @@ const SceneManager = {
     console.log('Resetting scene...');
     this.currentState = 'PATHWAY_SELECTION';
     this.currentPathway = null;
-    
-    // Clear environment
-    const container = document.querySelector('#dataFragmentsContainer');
-    if (container) {
-      container.innerHTML = '';
-    }
     
     // Switch back to intro scene
     const sceneManager = document.querySelector('[scene-manager]');

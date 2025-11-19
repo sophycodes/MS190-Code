@@ -32,7 +32,7 @@ const VRScene = {
     SceneManager.init();
     Player.init();
     Pathways.init();
-    DataFragments.init();
+    // DataFragments.init();
     
     this.initialized = true;
     console.log('VR Scene ready!');

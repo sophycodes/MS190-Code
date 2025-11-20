@@ -40,7 +40,7 @@ AFRAME.registerComponent('question-responder', {
       
       if (this.keyboardComponent) {
         console.log('Showing keyboard...');
-        this.keyboardComponent.show();
+        this.keyboardComponent.show(this.el);
       } else {
         console.warn('Keyboard component not ready yet!');
       }

@@ -15,9 +15,15 @@
     <!-- ============================================ -->
     <!-- CAMERA & PLAYER (shared across all scenes) -->
     <!-- ============================================ -->
-    <a-entity id="player" position="0.0 0.0 4.8">
+    <a-entity id="player" position="0.0 -0.4 4.5">
       <a-camera>
-        <a-cursor color="#00FFFF" raycaster="objects: .clickable"></a-cursor>
+        <a-cursor geometry="primitive: ring; radiusInner: 0.008; radiusOuter: 0.012"
+                material="color: #00FFFF; shader: flat"
+                scale="0.3 0.3 0.3"
+                raycaster="objects: .clickable; far: 6000; direction: 0 0 -1; interval: 50"
+                position="0 0 -0.1"
+                fuse="false">
+        </a-cursor>
       </a-camera>
       
       <a-entity id="leftHand" 
@@ -42,14 +48,6 @@
       <a-entity light="type: point; color: #00FF00; intensity: 2; distance: 20" position="0 2 -10"></a-entity>
       <a-entity light="type: point; color: #0000FF; intensity: 2; distance: 20" position="4 2 -10"></a-entity>
 
-      <!-- BEGIN BUTTON -->
-      <a-entity id="beginButton" position="0 0.5 -3" class="clickable">
-        <a-box width="1.5" height="0.5" depth="0.1" color="#1a1a1a"
-               material="shader: flat; transparent: true; opacity: 0.8">
-          <a-box width="1.52" height="0.52" depth="0.08" color="#00FFFF" opacity="0.3" position="0 0 -0.01"></a-box>
-        </a-box>
-        <a-text value="BEGIN" position="0 0 0.06" align="center" color="#FFFFFF" width="3" shader="flat"></a-text>
-      </a-entity>
 
       <!-- LEFT PATHWAY - TEXT (NEON RED) -->
       <!-- ADD portal-button component to make it clickable -->
@@ -79,26 +77,26 @@
         </a-entity>
         
         <!-- ADD "ENTER" prompt below TEXT label -->
-        <a-text value="TEXT" position="0 1.5 -2" align="center" color="#FF0000" width="4" shader="flat"
-                animation="property: position; to: 0 1.8 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine"></a-text>
+        <a-text value="TEXT" position="0 1.5 0" align="center" color="#FF0000" width="4" shader="flat"
+                animation="property: position; to: 0 1.8 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine"></a-text>
         
         <!-- ADD THIS NEW CLICKABLE ENTITY -->
-        <a-entity position="0 0.8 -2" 
+        <a-entity position="0 0.8 -0.3" 
                 portal-button="target: text">
-        <!-- Invisible clickable box -->
-        <a-box width="2" height="0.6" depth="0.1" 
-                class="clickable"
-                material="color: #000000; opacity: 0.5; transparent: true; side: double">
-        </a-box>
-        <!-- The [ ENTER ] text -->
-        <a-text value="[ ENTER ]" 
-                align="center" 
-                position="0 0 0.06"
-                color="#FF0000" 
-                width="3" 
-                shader="flat"
-                animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000">
-        </a-text>
+                <!-- Invisible clickable box -->
+                <a-box width="2" height="0.6" depth="0.1" 
+                        class="clickable"
+                        material="color: #000000; opacity: 0.5; transparent: true; side: double">
+                </a-box>
+                <!-- The [ ENTER ] text -->
+                <a-text value="[ ENTER ]" 
+                        align="center" 
+                        position="0 0 0.06"
+                        color="#FF0000" 
+                        width="3" 
+                        shader="flat"
+                        animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000">
+                </a-text>
         </a-entity>
 
       </a-entity>
@@ -128,11 +126,11 @@
           <a-sphere position="0 0.05 -15" radius="0.05" color="#00FF00" opacity="0.6"></a-sphere>
         </a-entity>
         
-        <a-text value="AUDIO" position="0 1.5 -2" align="center" color="#00FF00" width="4" shader="flat"
-                animation="property: position; to: 0 1.8 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 500"></a-text>
+        <a-text value="AUDIO" position="0 1.5 0" align="center" color="#00FF00" width="4" shader="flat"
+                animation="property: position; to: 0 1.8 -0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 500"></a-text>
         
         <!-- CLICKABLE ENTER BUTTON -->
-        <a-entity position="0 0.8 -2" 
+        <a-entity position="0 0.8 -0.3" 
                 portal-button="target: audio">
         <!-- Invisible clickable box -->
         <a-box width="2" height="0.6" depth="0.1" 
@@ -176,11 +174,11 @@
           <a-sphere position="0 0.05 -15" radius="0.05" color="#0000FF" opacity="0.6"></a-sphere>
         </a-entity>
         
-        <a-text value="MOVEMENT" position="0 1.5 -2" align="center" color="#0000FF" width="4" shader="flat"
-                animation="property: position; to: 0 1.8 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 1000"></a-text>
+        <a-text value="MOVEMENT" position="0 1.5 0" align="center" color="#0000FF" width="4" shader="flat"
+                animation="property: position; to: 0 1.8 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 1000"></a-text>
         
         <!-- CLICKABLE ENTER BUTTON -->
-        <a-entity position="0 0.8 -2" 
+        <a-entity position="0 0.8 -0.3" 
                 portal-button="target: movement">
         <!-- Invisible clickable box -->
         <a-box width="2" height="0.6" depth="0.1" 

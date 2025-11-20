@@ -24,10 +24,8 @@ AFRAME.registerComponent('vr-keyboard', {
   
   createKeyboard: function() {
     const container = document.createElement('a-entity');
-    container.setAttribute('position', '1.5 -0.2 -1.5');  // Right, slightly down, forward
-    container.setAttribute('rotation', '0 -20 0');         // Angled toward center
+    container.setAttribute('position', '0 1.8 -2');
     container.setAttribute('visible', 'false');
-  this.keyboard = container;
     this.keyboard = container;
     // Dark background panel
     const panel = document.createElement('a-plane');
@@ -92,25 +90,20 @@ AFRAME.registerComponent('vr-keyboard', {
     });
     
     // Space bar
-    this.createKey('SPACE', 0, yPos - 0.2, container, 3, 0.4);
+    this.createKey('SPACE', 0, yPos - 0.2, container, 2, 0.4);
     
+    // TO DO fix back space
+    // TO DO how to save user responses when web refreshes
     // Backspace
     this.createKey('←', -2.5, 0.5, container, 0.8, 0.4);
     
     // Submit button
-    this.createKey('SUBMIT', 2, yPos - 0.2, container, 1.5, 0.5);
+    this.createKey('SUBMIT', 2.5, yPos - 0.4, container, 0.8, 0.4);
     
     // Close button
-    this.createKey('CLOSE', 2.5, 1.6, container, 0.8, 0.4);
+    this.createKey('X', 2.5, 1.6, container, 0.4, 0.4);
     
-    // Attach to camera so it moves with the user
-    const camera = document.querySelector('a-camera') || document.querySelector('[camera]');
-    if (camera) {
-    camera.appendChild(container);
-    } else {
-    // Fallback to scene if camera not found
     document.querySelector('a-scene').appendChild(container);
-    }
   },
   
   createKey: function(label, x, y, parent, width = 0.4, height = 0.4) {
@@ -123,7 +116,7 @@ AFRAME.registerComponent('vr-keyboard', {
     keyBg.setAttribute('height', height);
     keyBg.setAttribute('depth', '0.05');
     keyBg.setAttribute('color', '#ff0000');
-    keyBg.setAttribute('opacity', '0.8');
+    keyBg.setAttribute('opacity', '1.0');
     keyBg.setAttribute('class', 'clickable keyboard-key'); // MOVED HERE!
     key.appendChild(keyBg);
     
@@ -131,8 +124,8 @@ AFRAME.registerComponent('vr-keyboard', {
     keyText.setAttribute('value', label);
     keyText.setAttribute('align', 'center');
     keyText.setAttribute('position', `0 0 0.03`);
-    keyText.setAttribute('color', '#000000');
-    keyText.setAttribute('width', width * 2);
+    keyText.setAttribute('color', '#ffffff');
+    keyText.setAttribute('width', width * 5);
     key.appendChild(keyText);
     
     // Click handler - attach to the BOX, not the parent entity
@@ -167,15 +160,44 @@ AFRAME.registerComponent('vr-keyboard', {
     }
   },
   
-  show: function() {
+  show: function(buttonEntity) {
     this.inputText = '';
     document.querySelector('#keyboard-display').setAttribute('value', '');
+    
+    // Get the world position of the RESPOND button
+    const worldPos = buttonEntity.object3D.getWorldPosition(new THREE.Vector3());
+    
+    // Position keyboard to the "right" of each corner
+    let xOffset, zOffset, rotation;
+    
+    switch(this.data.questionId) {
+      case 'fear':  // Front-Left corner (rotation: 0 45 0)
+        xOffset = 8;
+        zOffset = 2;
+        rotation = '0 20 0';
+        break;
+        
+      case 'data':  // Front-Right corner (rotation: 0 -45 0)
+        xOffset = -8;
+        zOffset = 2;
+        rotation = '0 -20 0';
+        break;
+        
+      case 'disassociate':  // Back-Left corner (rotation: 0 135 0)
+        xOffset = -8;  // Left in world space = right relative to this rotated corner
+        zOffset = 8;
+        rotation = '0 110 0';  // Face toward the viewer
+        break;
+        
+      default:
+        xOffset = 8;
+        zOffset = 0;
+        rotation = '0 0 0';
+    }
+    
+    this.keyboard.setAttribute('position', `${worldPos.x + xOffset} ${worldPos.y} ${worldPos.z + zOffset}`);
+    this.keyboard.setAttribute('rotation', rotation);
     this.keyboard.setAttribute('visible', 'true');
-  },
-  
-  close: function() {
-    this.keyboard.setAttribute('visible', 'false');
-    this.inputText = '';
   },
   
   submitResponse: function() {

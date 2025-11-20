@@ -23,16 +23,38 @@ AFRAME.registerComponent('portal-button', {
     const clickableBox = this.el.querySelector('a-box') || this.el.querySelector('.clickable') || this.el;
     clickableBox.classList.add('clickable');
     
-    // Handle click - listen on the clickable element, not parent
     this.onClick = () => {
       console.log('>>> PORTAL CLICKED <<<', data.target);
-      const sceneManager = document.querySelector('[scene-manager]');
       
-      if (sceneManager && sceneManager.components['scene-manager']) {
-        sceneManager.components['scene-manager'].switchScene(data.target);
-      } else {
-        console.warn('Scene manager not found');
+      // Get the player entity
+      const player = document.querySelector('#player');
+      
+      if (!player) {
+        console.warn('Player not found');
+        return;
       }
+      
+      // Get current position
+      const currentPos = player.getAttribute('position');
+      
+      // Animate player forward 10 units
+      player.setAttribute('animation', {
+        property: 'position',
+        to: `${currentPos.x} ${currentPos.y} ${currentPos.z - 10}`,  // Move forward (negative Z)
+        dur: 1000,  // 1 second
+        easing: 'easeInQuad'
+      });
+      
+      // Switch scene after animation completes
+      setTimeout(() => {
+        const sceneManager = document.querySelector('[scene-manager]');
+        
+        if (sceneManager && sceneManager.components['scene-manager']) {
+          sceneManager.components['scene-manager'].switchScene(data.target);
+        } else {
+          console.warn('Scene manager not found');
+        }
+      }, 1000);  // Wait for animation to finish
     };
     
     clickableBox.addEventListener('click', this.onClick);

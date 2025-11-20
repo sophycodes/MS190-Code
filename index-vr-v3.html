@@ -445,15 +445,20 @@
     <!-- ============================================ -->
     <!-- AUDIO SCENE (placeholder) -->
     <!-- ============================================ -->
-    <a-entity id="audio-scene" visible="false">
-      <a-entity grid-floor="size: 50; divisions: 50; colorGrid: #00ff00"></a-entity>
-      <a-sky color="#000000"></a-sky>
-      <a-text value="AUDIO REALM" align="center" position="0 3 -8" color="#00ff00" width="12"></a-text>
-      
-      <a-entity portal-button="target: intro" position="0 1.5 5" class="clickable">
+     <a-entity id="audio-scene" visible="false">
+        <!-- Voice-reactive spheres (neon green) -->
+        <a-entity audio-spheres="sensitivity: 40; maxSpheres: 15"></a-entity>
+        <!-- Audio-reactive spheres (neon green) -->
+        <a-entity music-spheres="count: 8; radius: 15; audioFiles: audio/cyber.mp3, audio/augmentation.mp3"></a-entity>
+        <!-- Your existing audio scene content -->
+        <a-entity grid-floor="size: 50; divisions: 50; colorGrid: #00ff00"></a-entity>
+        <a-sky color="#000000"></a-sky>
+        <a-text value="AUDIO REALM" align="center" position="0 3 -8" color="#00ff00" width="12"></a-text>
+        
+        <a-entity portal-button="target: intro" position="0 1.5 5" class="clickable">
         <a-box color="#00ff00" depth="0.2" height="1" width="3" opacity="0.8"></a-box>
         <a-text value="<< BACK" align="center" position="0 0 0.11" color="#000000" width="6"></a-text>
-      </a-entity>
+        </a-entity>
     </a-entity>
 
     <!-- ============================================ -->
@@ -480,6 +485,8 @@
    <script src="scene-manager.js"></script>
    <script src="player.js"></script>
    <script src="pathways.js"></script>
+   <script src="audio-spheres.js"></script>
+   <script src="music-spheres.js"></script>
   <!-- <script src="data-fragments.js"></script> -->
   <!-- <script src="vr-scene.js"></script> -->
   <script>

@@ -54,17 +54,9 @@
       <!-- LEFT PATHWAY - TEXT (NEON RED) -->
       <!-- ADD portal-button component to make it clickable -->
       <a-entity id="pathwayText" 
-                class="pathway clickable" 
-                position="-3.5 0 0"
-                portal-button="target: text">
+                class="pathway" 
+                position="-3.5 0 0">
 
-                <!-- ADD THIS CLICKABLE HITBOX -->
-                <a-box width="4" height="4" depth="5" 
-                        position="0 1.6 -8" 
-                        opacity="0" 
-                        material="transparent: true"
-                        class="clickable">
-                </a-box>
         
         <!-- All your existing TEXT pathway code -->
         <a-entity id="circlesLeft" position="0 1.6 -8">
@@ -90,15 +82,31 @@
         <a-text value="TEXT" position="0 1.5 -2" align="center" color="#FF0000" width="4" shader="flat"
                 animation="property: position; to: 0 1.8 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine"></a-text>
         
-        <a-text value="[ ENTER ]" position="0 0.8 -2" align="center" color="#FF0000" width="3" shader="flat"
-                animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000"></a-text>
+        <!-- ADD THIS NEW CLICKABLE ENTITY -->
+        <a-entity position="0 0.8 -2" 
+                portal-button="target: text">
+        <!-- Invisible clickable box -->
+        <a-box width="2" height="0.6" depth="0.1" 
+                class="clickable"
+                material="color: #000000; opacity: 0.5; transparent: true; side: double">
+        </a-box>
+        <!-- The [ ENTER ] text -->
+        <a-text value="[ ENTER ]" 
+                align="center" 
+                position="0 0 0.06"
+                color="#FF0000" 
+                width="3" 
+                shader="flat"
+                animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000">
+        </a-text>
+        </a-entity>
+
       </a-entity>
 
       <!-- CENTER PATHWAY - AUDIO (NEON GREEN) -->
       <a-entity id="pathwayAudio" 
-                class="pathway clickable" 
-                position="0 0 0"
-                portal-button="target: audio">
+                class="pathway" 
+                position="0 0 0">
         
         <!-- All your existing AUDIO pathway code -->
         <a-entity id="circlesCenter" position="0 1.6 -8">
@@ -123,15 +131,30 @@
         <a-text value="AUDIO" position="0 1.5 -2" align="center" color="#00FF00" width="4" shader="flat"
                 animation="property: position; to: 0 1.8 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 500"></a-text>
         
-        <a-text value="[ ENTER ]" position="0 0.8 -2" align="center" color="#00FF00" width="3" shader="flat"
-                animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000"></a-text>
+        <!-- CLICKABLE ENTER BUTTON -->
+        <a-entity position="0 0.8 -2" 
+                portal-button="target: audio">
+        <!-- Invisible clickable box -->
+        <a-box width="2" height="0.6" depth="0.1" 
+                class="clickable"
+                material="color: #000000; opacity: 0.5; transparent: true; side: double">
+        </a-box>
+        <!-- The [ ENTER ] text -->
+        <a-text value="[ ENTER ]" 
+                align="center" 
+                position="0 0 0.06"
+                color="#00FF00" 
+                width="3" 
+                shader="flat"
+                animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000">
+        </a-text>
+        </a-entity>
       </a-entity>
 
       <!-- RIGHT PATHWAY - MOVEMENT (NEON BLUE) -->
       <a-entity id="pathwayMovement" 
-                class="pathway clickable" 
-                position="3.5 0 0"
-                portal-button="target: movement">
+                class="pathway" 
+                position="3.5 0 0">
         
         <!-- All your existing MOVEMENT pathway code -->
         <a-entity id="circlesRight" position="0 1.6 -8">
@@ -156,8 +179,24 @@
         <a-text value="MOVEMENT" position="0 1.5 -2" align="center" color="#0000FF" width="4" shader="flat"
                 animation="property: position; to: 0 1.8 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 1000"></a-text>
         
-        <a-text value="[ ENTER ]" position="0 0.8 -2" align="center" color="#0000FF" width="3" shader="flat"
-                animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000"></a-text>
+        <!-- CLICKABLE ENTER BUTTON -->
+        <a-entity position="0 0.8 -2" 
+                portal-button="target: movement">
+        <!-- Invisible clickable box -->
+        <a-box width="2" height="0.6" depth="0.1" 
+                class="clickable"
+                material="color: #000000; opacity: 0.5; transparent: true; side: double">
+        </a-box>
+        <!-- The [ ENTER ] text -->
+        <a-text value="[ ENTER ]" 
+                align="center" 
+                position="0 0 0.06"
+                color="#0000FF" 
+                width="3" 
+                shader="flat"
+                animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000">
+        </a-text>
+  </a-entity>
       </a-entity>
 
       <!-- ENVIRONMENT -->
@@ -227,14 +266,14 @@
         </a-text>
         
         <!-- Interact button below box -->
-        <a-entity class="clickable" 
-                position="0 1.2 0"
+        <a-entity position="0 1.2 0"
                 question-responder="questionId: fear; questionText: What's the one technological fear you have?">
         <a-box color="#ff0000" 
                 depth="0.2" 
                 height="0.8" 
                 width="3"
                 opacity="0.8"
+                class="clickable"
                 material="shader: flat; emissive: #ff0000; emissiveIntensity: 1">
         </a-box>
         <a-text value="RESPOND" 
@@ -280,14 +319,14 @@
         </a-text>
         
         <!-- Interact button -->
-        <a-entity class="clickable" 
-                position="0 1.2 0"
+        <a-entity position="0 1.2 0"
                 question-responder="questionId: data; questionText: What do you imagine your data truly is?">
         <a-box color="#ff0000" 
                 depth="0.2" 
                 height="0.8" 
                 width="3"
                 opacity="0.8"
+                class="clickable"
                 material="shader: flat; emissive: #ff0000; emissiveIntensity: 1">
         </a-box>
         <a-text value="RESPOND" 
@@ -331,16 +370,15 @@
                 line-height="50"
                 wrap-count="20">
         </a-text>
-        
-        <!-- Interact button -->
-        <a-entity class="clickable" 
-                position="0 1.2 0"
-                question-responder="questionId: disassociate; questionText: What technology makes you disassociate from the present the most?">
+
+        <a-entity position="0 1.2 0" 
+          question-responder="questionId: disassociate; questionText: What technology makes you disassociate from the present the most?">
         <a-box color="#ff0000" 
                 depth="0.2" 
                 height="0.8" 
                 width="3"
                 opacity="0.8"
+                class="clickable"  
                 material="shader: flat; emissive: #ff0000; emissiveIntensity: 1">
         </a-box>
         <a-text value="RESPOND" 
@@ -437,9 +475,13 @@
   </a-scene>
 
   <!-- JAVASCRIPT FILES -->
-  <script src="scene-manager.js"></script>
-  <script src="player.js"></script>
-  <script src="pathways.js"></script>
+   <script src="grid-floor.js"></script>
+   <script src="portal-button.js"></script>
+   <script src="vr-keyboard.js"></script>
+   <script src="question-responder.js"></script>
+   <script src="scene-manager.js"></script>
+   <script src="player.js"></script>
+   <script src="pathways.js"></script>
   <!-- <script src="data-fragments.js"></script> -->
   <!-- <script src="vr-scene.js"></script> -->
   <script>

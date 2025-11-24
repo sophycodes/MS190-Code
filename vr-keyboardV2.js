@@ -14,7 +14,7 @@ console.log('=== vr-keyboard.js FILE LOADED ===');
 // SUPABASE CONFIGURATION
 // ============================================
 const SUPABASE_URL = 'https://lhbfbvdjpgrihsibymkw.supabase.co';      
-const SUPABASE_ANON_KEY = 'sb_publishable_D0_3seHXUnPzf5jlgqy_Cg_946f5DRZ';     // e.g., 'eyJhbGciOiJIUzI1NiIs...'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoYmZidmRqcGdyaWhzaWJ5bWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5NTU5MTksImV4cCI6MjA3OTUzMTkxOX0.zNQ63iaifP-iLjGwwdzfZSd6ks_6w2aAf5YUFl5R-Zo';     // e.g., 'eyJhbGciOiJIUzI1NiIs...'
 
 // ============================================
 // SUPABASE RESPONSE STORAGE

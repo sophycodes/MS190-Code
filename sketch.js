@@ -7,6 +7,62 @@ const symbolSize = 24;
 let inputBox; // The input field
 let submitButton; // The submit button
 
+// ============== SUPABASE CONFIG ==============
+const SUPABASE_URL = 'https://lhbfbvdjpgrihsibymkw.supabase.co';  
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoYmZidmRqcGdyaWhzaWJ5bWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5NTU5MTksImV4cCI6MjA3OTUzMTkxOX0.zNQ63iaifP-iLjGwwdzfZSd6ks_6w2aAf5YUFl5R-Zo';  // Replace with your anon key
+
+// ============== LOAD SECRETS FROM DATABASE ==============
+async function loadSecrets() {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/secrets?select=text`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+    
+    const data = await response.json();
+    
+    // Add all saved secrets to userWords
+    data.forEach(secret => {
+      userWords.push(secret.text.toUpperCase());
+    });
+    
+    console.log('Loaded secrets from database:', userWords);
+    
+    // Create initial blue streams for loaded secrets
+    if (userWords.length > 0) {
+      for (let i = 0; i < min(userWords.length, 10); i++) {
+        const x = random(0, width);
+        const stream = new Stream(true);
+        stream.generateSymbols(x, random(-2000, 0));
+        streams.push(stream);
+      }
+    }
+  } catch (error) {
+    console.error('Error loading secrets:', error);
+  }
+}
+
+// ============== SAVE SECRET TO DATABASE ==============
+async function saveSecret(text) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/secrets`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ text: text })
+    });
+    console.log('Secret saved:', text);
+  } catch (error) {
+    console.error('Error saving secret:', error);
+  }
+}
+
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
   background(0);
@@ -53,6 +109,9 @@ function setup() {
   }
   textFont('Consolas');
   textSize(symbolSize);
+
+  loadSecrets();
+
 }
 
 function draw() {
@@ -62,7 +121,7 @@ function draw() {
   fill(0, 255, 70); // Green color
   textSize(20);
   textAlign(CENTER);
-  text("WHAT'S YOUR BEST KEPT SECRET", width / 2, height / 2 - 80);
+  text("WHAT'S YOUR BEST KEPT SECRET?", (width / 2) + 8, height / 2 - 80);
   
   // Reset text settings for streams
   textSize(symbolSize);
@@ -79,7 +138,8 @@ function handleSubmit() {
   if (userInput !== '') {
     // Add to userWords array
     userWords.push(userInput.toUpperCase()); // Store in uppercase
-    
+    saveSecret(userInput.toUpperCase());// save to database
+
     // Create a new stream with this word (blue color)
     const x = random(0, width); // Random horizontal position
     const stream = new Stream(true); // Pass true to indicate it's a user stream

@@ -1,13 +1,12 @@
 /**
  * question-responder.js - Connects RESPOND buttons to VR keyboard
+ * 
+ * This component attaches to RESPOND buttons in the Text Realm
+ * and opens the VR keyboard when clicked.
  */
 
 console.log('=== question-responder.js FILE LOADED ===');
 
-/**
- * Question Responder Component - Opens VR keyboard when RESPOND button is clicked
- * Creates a keyboard instance for each question and handles button clicks
- */
 AFRAME.registerComponent('question-responder', {
   schema: {
     questionId: {type: 'string', default: 'question'},
@@ -17,6 +16,7 @@ AFRAME.registerComponent('question-responder', {
   init: function() {
     console.log('>>> QUESTION RESPONDER INIT <<<', this.data.questionId);
     const data = this.data;
+    const self = this;
     
     // Create keyboard instance for this question
     const keyboard = document.createElement('a-entity');
@@ -24,27 +24,51 @@ AFRAME.registerComponent('question-responder', {
       questionId: data.questionId,
       questionText: data.questionText
     });
+    
+    // Store reference
+    this.keyboardEntity = keyboard;
+    
+    // Add keyboard to scene
     document.querySelector('a-scene').appendChild(keyboard);
     
-    // Wait for the vr-keyboard component to initialize
-    keyboard.addEventListener('componentinitialized', (evt) => {
-      if (evt.detail.name === 'vr-keyboard') {
+    // Wait for component to be ready
+    const checkComponent = () => {
+      if (keyboard.components['vr-keyboard']) {
         console.log('Keyboard component ready for', data.questionId);
-        this.keyboardComponent = keyboard.components['vr-keyboard'];
+        self.keyboardComponent = keyboard.components['vr-keyboard'];
+      } else {
+        setTimeout(checkComponent, 100);
       }
-    });
+    };
     
-    // Click handler
-    this.el.addEventListener('click', () => {
+    // Start checking after a brief delay
+    setTimeout(checkComponent, 200);
+    
+    // Listen for clicks on the clickable box (or entity if no box found)
+    const clickTarget = this.el.querySelector('.clickable') || this.el;
+    
+    clickTarget.addEventListener('click', () => {
       console.log('>>> RESPOND BUTTON CLICKED <<<', data.questionId);
       
-      if (this.keyboardComponent) {
-        console.log('Showing keyboard...');
-        this.keyboardComponent.show(this.el);
+      if (self.keyboardComponent) {
+        console.log('Opening keyboard...');
+        self.keyboardComponent.show();
       } else {
-        console.warn('Keyboard component not ready yet!');
+        console.warn('Keyboard not ready yet, trying again...');
+        // Try to get it one more time
+        if (keyboard.components['vr-keyboard']) {
+          self.keyboardComponent = keyboard.components['vr-keyboard'];
+          self.keyboardComponent.show();
+        }
       }
     });
+  },
+  
+  remove: function() {
+    // Clean up keyboard when component is removed
+    if (this.keyboardEntity && this.keyboardEntity.parentNode) {
+      this.keyboardEntity.parentNode.removeChild(this.keyboardEntity);
+    }
   }
 });
 

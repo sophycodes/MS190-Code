@@ -52,13 +52,14 @@ AFRAME.registerComponent('question-responder', {
       
       if (self.keyboardComponent) {
         console.log('Opening keyboard...');
-        self.keyboardComponent.show();
+        // Pass the button entity so keyboard knows where to position itself
+        self.keyboardComponent.show(self.el);
       } else {
         console.warn('Keyboard not ready yet, trying again...');
         // Try to get it one more time
         if (keyboard.components['vr-keyboard']) {
           self.keyboardComponent = keyboard.components['vr-keyboard'];
-          self.keyboardComponent.show();
+          self.keyboardComponent.show(self.el);
         }
       }
     });

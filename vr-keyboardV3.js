@@ -39,7 +39,71 @@ const ResponseStorage = {
     return data || [];
   },
   
-  async save(questionId, text, position, rotation) {
+  // Track card count per question for grid positioning
+  cardCounts: {},
+  
+  // 3D Grid layout - cards spread UP and BACK (behind question)
+  gridConfig: {
+    columns: 5,           // Cards per row (X axis)
+    colSpacing: 3.0,      // Horizontal spacing
+    rows: 4,              // Rows per depth layer (Y axis)
+    rowSpacing: 2.2,      // Vertical spacing
+    startY: 3,            // Bottom row Y position
+    depthLayers: 5,       // How many layers deep
+    depthSpacing: 4.0,    // Z spacing between layers
+    startZ: -10,           // First layer Z (negative = behind question)
+    jitterX: 0.3,         // Small random offset for organic feel
+    jitterY: 0.2,
+    jitterZ: 0.4
+  },
+  
+  // Calculate grid position for a card (no overlaps!)
+  getGridPosition(questionId) {
+    if (!this.cardCounts[questionId]) {
+      this.cardCounts[questionId] = 0;
+    }
+    const index = this.cardCounts[questionId];
+    this.cardCounts[questionId]++;
+    
+    const config = this.gridConfig;
+    
+    // Cards per depth layer
+    const cardsPerLayer = config.columns * config.rows;
+    
+    // Which depth layer (z)
+    const depthLayer = Math.floor(index / cardsPerLayer);
+    
+    // Position within that layer
+    const indexInLayer = index % cardsPerLayer;
+    const col = indexInLayer % config.columns;
+    const row = Math.floor(indexInLayer / config.columns);
+    
+    // Calculate base positions
+    const baseX = (col - (config.columns - 1) / 2) * config.colSpacing;
+    const baseY = config.startY + (row * config.rowSpacing);
+    const baseZ = config.startZ - (depthLayer * config.depthSpacing);  // Goes BACK
+    
+    // Add jitter for organic feel
+    const position = {
+      x: baseX + (Math.random() - 0.5) * config.jitterX,
+      y: baseY + (Math.random() - 0.5) * config.jitterY,
+      z: baseZ + (Math.random() - 0.5) * config.jitterZ
+    };
+    
+    // Slight tilt only, Y stays 0 to face forward
+    const rotation = {
+      x: (Math.random() - 0.5) * 8,
+      y: 0,
+      z: (Math.random() - 0.5) * 10
+    };
+    
+    return { position, rotation };
+  },
+  
+  async save(questionId, text) {
+    // Get grid position (no overlaps!)
+    const { position, rotation } = this.getGridPosition(questionId);
+    
     const result = await this._fetch('responses', {
       method: 'POST',
       body: JSON.stringify({
@@ -97,6 +161,9 @@ AFRAME.registerComponent('vr-keyboard', {
     if (responses.length > 0) {
       console.log(`Found ${responses.length} saved responses for ${questionId}`);
       
+      // Initialize card count so new cards continue from where we left off
+      ResponseStorage.cardCounts[questionId] = responses.length;
+      
       const container = document.querySelector(`#responses-${questionId}`);
       if (container) {
         responses.forEach((response, index) => {
@@ -108,6 +175,7 @@ AFRAME.registerComponent('vr-keyboard', {
       }
     } else {
       console.log(`No saved responses for ${questionId}`);
+      ResponseStorage.cardCounts[questionId] = 0;
     }
   },
   
@@ -256,37 +324,15 @@ AFRAME.registerComponent('vr-keyboard', {
     // Get the world position of the RESPOND button
     const worldPos = buttonEntity.object3D.getWorldPosition(new THREE.Vector3());
     
-    // Position keyboard to the "right" of each corner
-    let xOffset, zOffset, rotation;
+    // Get the world rotation of the parent corner
+    const parentCorner = buttonEntity.parentElement;
+    const cornerRotation = parentCorner ? parentCorner.getAttribute('rotation') : {x: 0, y: 0, z: 0};
+    const yRot = cornerRotation ? cornerRotation.y : 0;
     
-    switch(this.data.questionId) {
-      case 'fear':  // Front-Left corner (rotation: 0 45 0)
-        xOffset = 8;
-        zOffset = 2;
-        rotation = '0 20 0';
-        break;
-        
-      case 'data':  // Front-Right corner (rotation: 0 -45 0)
-        xOffset = -8;
-        zOffset = 2;
-        rotation = '0 -20 0';
-        break;
-        
-      case 'disassociate':  
-        xOffset = -6;    // Move LEFT in world coords (viewer's RIGHT for this corner)
-        zOffset = -10;   // Move toward -Z (to the side, not overlapping)
-        yOffset = 0.5;   // Above the grid floor
-        rotation = '0 135 0';  // Match the corner's rotation
-        break;
-        
-      default:
-        xOffset = 8;
-        zOffset = 0;
-        rotation = '0 0 0';
-    }
-    
-    this.keyboard.setAttribute('position', `${worldPos.x + xOffset} ${worldPos.y + yOffset} ${worldPos.z + zOffset}`);
-    this.keyboard.setAttribute('rotation', rotation);
+    // Position keyboard directly below the question, slightly in front
+    // Tilt backward (-30 on X axis) for comfortable viewing
+    this.keyboard.setAttribute('position', `${worldPos.x} ${worldPos.y - 0.5} ${worldPos.z + 1.5}`);
+    this.keyboard.setAttribute('rotation', `-30 ${yRot} 0`);
     this.keyboard.setAttribute('visible', 'true');
   },
   
@@ -295,7 +341,7 @@ AFRAME.registerComponent('vr-keyboard', {
     this.inputText = '';
   },
   
-  // MODIFIED: Now saves to Supabase
+  // MODIFIED: Now saves to Supabase with grid positioning
   async submitResponse() {
     console.log('Submitting response:', this.inputText);
     
@@ -306,50 +352,29 @@ AFRAME.registerComponent('vr-keyboard', {
       return;
     }
     
-    // Generate random position (same as your original)
-    const x = (Math.random() - 0.5) * 10;
-    const y = Math.random() * 3 + 1;
-    const z = Math.random() * 5 - 2;
-    const position = { x, y, z };
+    // Save to Supabase (grid position calculated automatically)
+    const savedResponse = await ResponseStorage.save(this.data.questionId, this.inputText);
     
-    // Generate random rotation (same as your original)
-    const rotZ = (Math.random() - 0.5) * 15;
-    const rotation = { x: 0, y: 0, z: rotZ };
-    
-    // Save to Supabase
-    await ResponseStorage.save(this.data.questionId, this.inputText, position, rotation);
-    
-    // Create sticky note (unchanged)
-    this.createStickyNote(this.inputText, container, position, rotation);
+    if (savedResponse) {
+      // Create sticky note with the saved position
+      this.createStickyNote(savedResponse.text, container, savedResponse.position, savedResponse.rotation);
+    } else {
+      console.error('Failed to save to Supabase');
+    }
     
     // Close keyboard
     this.close();
   },
   
-  // MODIFIED: Now accepts optional position/rotation for loaded responses
+  // Creates response card at grid position (behind question panel)
   createStickyNote: function(text, container, position, rotation) {
     const note = document.createElement('a-entity');
     
-    // Use provided position or generate random (for backwards compatibility)
-    let x, y, z, rotZ;
-    if (position) {
-      x = position.x;
-      y = position.y;
-      z = position.z;
-    } else {
-      x = (Math.random() - 0.5) * 10;
-      y = Math.random() * 3 + 1;
-      z = Math.random() * 5 - 2;
-    }
+    // Use grid position (z is negative = behind question)
+    note.setAttribute('position', `${position.x} ${position.y} ${position.z}`);
+    note.setAttribute('rotation', `${rotation.x} ${rotation.y} ${rotation.z}`);
     
-    if (rotation) {
-      rotZ = rotation.z;
-    } else {
-      rotZ = (Math.random() - 0.5) * 15;
-    }
-    
-    note.setAttribute('position', `${x} ${y} ${z}`);
-    note.setAttribute('rotation', `0 0 ${rotZ}`);
+    console.log(`Creating card at z=${position.z} (behind question panel)`);
     
     // Main background panel (dark)
     const noteBg = document.createElement('a-plane');
@@ -466,7 +491,7 @@ AFRAME.registerComponent('vr-keyboard', {
     noteText.setAttribute('line-height', '45');
     note.appendChild(noteText);
     
-    // Appear animation with glitch effect
+    // Appear animation
     note.setAttribute('scale', '0 0 0');
     note.setAttribute('animation', {
       property: 'scale',
@@ -475,13 +500,13 @@ AFRAME.registerComponent('vr-keyboard', {
       easing: 'easeOutBack'
     });
     
-    // Optional: Subtle pulsing glow
-    note.setAttribute('animation__pulse', {
-      property: 'rotation',
-      to: `0 0 ${rotZ + 2}`,
+    // Subtle floating animation
+    note.setAttribute('animation__float', {
+      property: 'position',
+      to: `${position.x} ${position.y + 0.15} ${position.z}`,
       dir: 'alternate',
       loop: true,
-      dur: 3000,
+      dur: 3000 + Math.random() * 2000,
       easing: 'easeInOutSine'
     });
     

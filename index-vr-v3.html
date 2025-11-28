@@ -242,7 +242,7 @@
     <!-- Environment Title -->
     <a-text value="TEXT REALM" 
             align="center" 
-            position="0 8 0" 
+            position="0 12 0" 
             color="#ff0000" 
             width="20"
             opacity="0.8">
@@ -270,7 +270,7 @@
         </a-plane>
         
         <!-- Question Text -->
-        <a-text value="What's the one\ntechnological fear\nyou have?" 
+        <a-text value="What scares you the most about technology?" 
                 align="center" 
                 position="0 4 0.1" 
                 color="#ff0000" 
@@ -281,7 +281,7 @@
         
         <!-- Interact button below box -->
         <a-entity position="0 1.2 0"
-                question-responder="questionId: fear; questionText: What's the one technological fear you have?">
+                question-responder="questionId: fear; questionText: What scares you the most about technology?">
         <a-box color="#ff0000" 
                 depth="0.2" 
                 height="0.8" 
@@ -323,7 +323,7 @@
         </a-plane>
         
         <!-- Question Text -->
-        <a-text value="What do you imagine\nyour data\ntruly is?" 
+        <a-text value="What is data to you?" 
                 align="center" 
                 position="0 4 0.1" 
                 color="#ff0000" 
@@ -334,7 +334,7 @@
         
         <!-- Interact button -->
         <a-entity position="0 1.2 0"
-                question-responder="questionId: data; questionText: What do you imagine your data truly is?">
+                question-responder="questionId: data; questionText: How do you define data?">
         <a-box color="#ff0000" 
                 depth="0.2" 
                 height="0.8" 
@@ -376,7 +376,7 @@
         </a-plane>
         
         <!-- Question Text -->
-        <a-text value="What technology makes\nyou disassociate from\nthe present the most?" 
+        <a-text value="What technology makes you disassociate from the present?" 
                 align="center" 
                 position="0 4 0.1" 
                 color="#ff0000" 
@@ -410,53 +410,10 @@
     <!-- ============================================ -->
     <!-- CORNER 4: QUOTES (Back-Right) -->
     <!-- ============================================ -->
-    <a-entity id="corner4" position="12 0 12" rotation="0 -135 0">
-        
-        <!-- Neon Box Frame -->
-        <a-plane width="8" 
-                height="5" 
-                position="0 4 0"
-                color="#000000"
-                opacity="0.7">
-        <a-plane width="8.2" 
-                height="5.2" 
-                position="0 0 -0.01"
-                color="#ff0000"
-                opacity="0.3"
-                material="shader: flat; emissive: #ff0000; emissiveIntensity: 1.5">
-        </a-plane>
-        </a-plane>
-        
-        <!-- Placeholder Text -->
-        <a-text value="QUOTES\n\n[Coming Soon]" 
-                align="center" 
-                position="0 4 0.1" 
-                color="#ff0000" 
-                width="6"
-                line-height="50"
-                opacity="0.5">
-        </a-text>
-        
-        <!-- Container for quotes -->
-        <a-entity id="quotes-container" position="0 2 5"></a-entity>
-    </a-entity>
-    
-    <!-- Back button (center, behind user) -->
-    <a-entity portal-button="target: intro" position="0 1.5 8" class="clickable">
-        <a-box color="#ff0000" 
-            depth="0.2" 
-            height="1" 
-            width="3" 
-            opacity="0.8"
-            material="shader: flat; emissive: #ff0000; emissiveIntensity: 1">
-        </a-box>
-        <a-text value="<< BACK" align="center" position="0 0 0.11" color="#000000" width="6"></a-text>
-    </a-entity>
-    
-    </a-entity>
-
-
-
+     <a-entity id="corner4" position="12 0 12" rotation="0 -135 0">
+        <!-- Quiz Game Component -->
+        <a-entity text-quiz></a-entity>
+     </a-entity>
 
     <!-- ============================================ -->
     <!-- AUDIO SCENE (placeholder) -->
@@ -498,6 +455,7 @@
    <script src="portal-button.js"></script>
    <script src="vr-keyboardV3.js"></script>
    <script src="question-responder.js"></script>
+   <script src="text-quiz.js"></script>
    <script src="scene-manager.js"></script>
    <script src="player.js"></script>
    <script src="pathways.js"></script>

@@ -47,6 +47,7 @@ AFRAME.registerComponent('text-quiz', {
     this.gameCards = [];
     this.cardEntities = [];
     this.gameStarted = false;
+    this.isStarting = false;  // Flag to prevent double-starting
     
     // Create intro panel (always visible until game starts)
     this.createIntroPanel();
@@ -115,6 +116,9 @@ AFRAME.registerComponent('text-quiz', {
     btnBg.setAttribute('material', 'shader: flat; emissive: #ff0000; emissiveIntensity: 1');
     startBtn.appendChild(btnBg);
     
+    // Store reference to button for later
+    this.startBtnBg = btnBg;
+    
     const btnText = document.createElement('a-text');
     btnText.setAttribute('value', 'START GAME');
     btnText.setAttribute('align', 'center');
@@ -123,8 +127,9 @@ AFRAME.registerComponent('text-quiz', {
     btnText.setAttribute('width', '6');
     startBtn.appendChild(btnText);
     
-    // Click handler
-    btnBg.addEventListener('click', () => {
+    // Click handler with protection
+    btnBg.addEventListener('click', (event) => {
+      event.stopPropagation();
       console.log('Start quiz clicked!');
       this.startGame();
     });
@@ -136,6 +141,13 @@ AFRAME.registerComponent('text-quiz', {
   },
   
   startGame: function() {
+    // Prevent multiple starts
+    if (this.isStarting) {
+      console.log('Already starting, ignoring');
+      return;
+    }
+    
+    this.isStarting = true;
     console.log('Starting quiz game...');
     
     // Reset state
@@ -143,8 +155,14 @@ AFRAME.registerComponent('text-quiz', {
     this.selectionsRemaining = 5;
     this.gameStarted = true;
     
-    // Hide intro panel
+    // Hide intro panel AND move it away to prevent ghost clicks
     this.introPanel.setAttribute('visible', 'false');
+    this.introPanel.setAttribute('position', '0 -1000 0');
+    
+    // Remove clickable class from start button
+    if (this.startBtnBg) {
+      this.startBtnBg.classList.remove('clickable');
+    }
     
     // Show game container
     this.gameContainer.setAttribute('visible', 'true');
@@ -170,6 +188,11 @@ AFRAME.registerComponent('text-quiz', {
     
     // Create score display
     this.createScoreDisplay();
+    
+    // Allow starting again after a short delay
+    setTimeout(() => {
+      this.isStarting = false;
+    }, 500);
   },
   
   createCardGrid: function() {
@@ -327,8 +350,9 @@ AFRAME.registerComponent('text-quiz', {
     // Store text reference for color change
     card.textEl = cardText;
     
-    // Click handler
-    cardBg.addEventListener('click', () => {
+    // Click handler with event stop
+    cardBg.addEventListener('click', (event) => {
+      event.stopPropagation();
       this.handleCardClick(index, card);
     });
     
@@ -376,6 +400,12 @@ AFRAME.registerComponent('text-quiz', {
   },
   
   handleCardClick: function(index, cardEntity) {
+    // Make sure we have valid game state
+    if (!this.gameStarted || !this.gameCards || !this.gameCards[index]) {
+      console.log('Invalid game state, ignoring click');
+      return;
+    }
+    
     const cardData = this.gameCards[index];
     
     // Ignore if already selected or no selections left
@@ -413,7 +443,7 @@ AFRAME.registerComponent('text-quiz', {
   
   highlightSelected: function(cardEntity) {
     // Change to cyan/teal to show it's selected (before reveal)
-    const selectedColor = '#00ffff';
+    const selectedColor = '#ffffff';
     const selectedBgColor = '#001a1a';
     
     cardEntity.borderEl.setAttribute('color', selectedColor);
@@ -493,6 +523,9 @@ AFRAME.registerComponent('text-quiz', {
   
   endGame: function() {
     console.log('Game over! Final score:', this.score);
+    
+    // Reset game state
+    this.gameStarted = false;
     
     // Hide game container
     this.gameContainer.setAttribute('visible', 'false');
@@ -581,7 +614,8 @@ AFRAME.registerComponent('text-quiz', {
     btnText.setAttribute('width', '6');
     playAgainBtn.appendChild(btnText);
     
-    btnBg.addEventListener('click', () => {
+    btnBg.addEventListener('click', (event) => {
+      event.stopPropagation();
       endScreen.parentNode.removeChild(endScreen);
       this.startGame();
     });

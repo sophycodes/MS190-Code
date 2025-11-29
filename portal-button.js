@@ -34,7 +34,20 @@ AFRAME.registerComponent('portal-button', {
         return;
       }
       
-      // Get current position
+      // Check if going back to intro (EXIT button)
+      if (data.target === 'intro') {
+        // Reset player to starting position immediately
+        player.setAttribute('position', '0 -0.4 4.5');
+        
+        // Switch scene immediately (no forward animation needed)
+        const sceneManager = document.querySelector('[scene-manager]');
+        if (sceneManager && sceneManager.components['scene-manager']) {
+          sceneManager.components['scene-manager'].switchScene(data.target);
+        }
+        return;
+      }
+      
+      // For entering realms: animate player forward
       const currentPos = player.getAttribute('position');
       
       // Animate player forward 10 units

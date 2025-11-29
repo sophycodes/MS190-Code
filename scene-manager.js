@@ -10,7 +10,8 @@ console.log('=== scene-manager.js FILE LOADED ===');
 AFRAME.registerComponent('scene-manager', {
   schema: {
     scenes: {type: 'array', default: ['intro', 'text', 'audio', 'movement']},
-    currentScene: {type: 'string', default: 'intro'}
+    currentScene: {type: 'string', default: 'intro'},
+    startPosition: {type: 'vec3', default: {x: 0, y: -0.4, z: 4.5}}
   },
   
   init: function() {
@@ -44,6 +45,11 @@ AFRAME.registerComponent('scene-manager', {
       this.scenes[sceneName].setAttribute('visible', true);
       this.data.currentScene = sceneName;
       
+      // Reset player position when going back to intro
+      if (sceneName === 'intro') {
+        this.resetPlayerPosition();
+      }
+      
       // Emit event for other systems to react
       this.el.emit('sceneChanged', {newScene: sceneName});
       
@@ -57,8 +63,39 @@ AFRAME.registerComponent('scene-manager', {
     } else {
       console.warn('Scene not found:', sceneName);
     }
+  },
+  
+  resetPlayerPosition: function() {
+    const player = document.querySelector('#player');
+    const camera = document.querySelector('a-camera');
+    
+    if (player) {
+      // Remove any existing animation
+      player.removeAttribute('animation');
+      
+      // Reset position immediately
+      player.object3D.position.set(0.0, -0.8, 5.0);
+      player.object3D.rotation.set(0, 0, 0);
+      
+      // Also reset camera rotation (the look direction)
+      if (camera) {
+        camera.object3D.rotation.set(0, 0, 0);
+        
+        // Reset the look-controls if present
+        if (camera.components['look-controls']) {
+          camera.components['look-controls'].pitchObject.rotation.x = 0;
+          camera.components['look-controls'].yawObject.rotation.y = 0;
+        }
+      }
+      
+      // Force A-Frame to sync
+      player.setAttribute('position', '0.0 -0.4 4.5');
+      
+      console.log('Player position and camera reset');
+    }
   }
 });
+
 console.log('scene-manager component registered');
 
 // ============================================

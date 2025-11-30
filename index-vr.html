@@ -5,14 +5,15 @@
   <title>Figaroa - Scene 2: 3 Paths</title>
   <meta name="description" content="VR Cyberspace Experience">
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.0.0/dist/aframe-extras.min.js"></script> -->
   <link rel="stylesheet" href="style-vr.css">
 </head>
 <body>
-  <!-- ADD SCENE MANAGER HERE -->
+
   <a-scene background="color: #000000" scene-manager="currentScene: intro">
 
-    <!-- EYE ASSET -->
+    <!-- ============================================ -->
+    <!-- ASSETS -->
+    <!-- ============================================ -->
     <a-assets>
       <a-asset-item id="cyber-eye" src="assets/cyber_eye.glb"></a-asset-item>
     </a-assets>
@@ -22,28 +23,35 @@
     <!-- ============================================ -->
     <a-entity id="player" position="0.0 -0.4 4.5">
       <a-camera>
-        <a-cursor geometry="primitive: ring; radiusInner: 0.008; radiusOuter: 0.012"
-                material="color: #00FFFF; shader: flat"
-                scale="0.3 0.3 0.3"
-                raycaster="objects: .clickable; far: 6000; direction: 0 0 -1; interval: 50"
-                position="0 0 -0.1"
-                fuse="false">
+        <a-cursor 
+          geometry="primitive: ring; radiusInner: 0.008; radiusOuter: 0.012"
+          material="color: #00FFFF; shader: flat"
+          scale="0.3 0.3 0.3"
+          raycaster="objects: .clickable; far: 6000; direction: 0 0 -1; interval: 50"
+          position="0 0 -0.1"
+          fuse="false">
         </a-cursor>
       </a-camera>
       
-      <a-entity id="leftHand" 
-                hand-controls="hand: left; handModelStyle: lowPoly; color: #00FFFF"
-                position="-0.3 0 -0.5">
+      <a-entity 
+        id="leftHand" 
+        hand-controls="hand: left; handModelStyle: lowPoly; color: #00FFFF"
+        position="-0.3 0 -0.5"
+        ribbon-trail="color: #00ffff; maxPoints: 60; fadeTime: 2000; width: 0.04"
+        ghost-silhouette="color: #00ffff; interval: 400">
       </a-entity>
-      
-      <a-entity id="rightHand" 
-                hand-controls="hand: right; handModelStyle: lowPoly; color: #00FFFF"
-                position="0.3 0 -0.5">
+
+      <a-entity 
+        id="rightHand" 
+        hand-controls="hand: right; handModelStyle: lowPoly; color: #00FFFF"
+        position="0.3 0 -0.5"
+        ribbon-trail="color: #ff00ff; maxPoints: 60; fadeTime: 2000; width: 0.04"
+        ghost-silhouette="color: #ff00ff; interval: 400">
       </a-entity>
     </a-entity>
 
     <!-- ============================================ -->
-    <!-- INTRO SCENE - Your existing portal selection -->
+    <!-- INTRO SCENE - Portal Selection -->
     <!-- ============================================ -->
     <a-entity id="intro-scene">
       
@@ -53,15 +61,9 @@
       <a-entity light="type: point; color: #00FF00; intensity: 2; distance: 20" position="0 2 -10"></a-entity>
       <a-entity light="type: point; color: #0000FF; intensity: 2; distance: 20" position="4 2 -10"></a-entity>
 
-
       <!-- LEFT PATHWAY - TEXT (NEON RED) -->
-      <!-- ADD portal-button component to make it clickable -->
-      <a-entity id="pathwayText" 
-                class="pathway" 
-                position="-3.5 0 0">
-
+      <a-entity id="pathwayText" class="pathway" position="-3.5 0 0">
         
-        <!-- All your existing TEXT pathway code -->
         <a-entity id="circlesLeft" position="0 1.6 -8">
           <a-ring position="0 0 0" radius-inner="1.5" radius-outer="1.6" color="#FF0000" opacity="0.3" material="shader: flat"></a-ring>
           <a-ring position="0 0 -3" radius-inner="1.5" radius-outer="1.6" color="#FF0000" opacity="0.2" material="shader: flat"></a-ring>
@@ -69,11 +71,11 @@
           <a-ring position="0 0 -9" radius-inner="1.5" radius-outer="1.6" color="#FF0000" opacity="0.1" material="shader: flat"></a-ring>
         </a-entity>
         
-        <a-box position="-0.6 0.01 -10" width="0.03" height="0.03" depth="20" color="#880000" material="shader: flat; emissive: #880000; emissiveIntensity: 1.5"></a-box>
-        <a-box position="-0.3 0.01 -10" width="0.03" height="0.03" depth="20" color="#CC0000" material="shader: flat; emissive: #CC0000; emissiveIntensity: 1.5"></a-box>
-        <a-box position="0 0.01 -10" width="0.03" height="0.03" depth="20" color="#FF0000" material="shader: flat; emissive: #FF0000; emissiveIntensity: 2"></a-box>
-        <a-box position="0.3 0.01 -10" width="0.03" height="0.03" depth="20" color="#CC0000" material="shader: flat; emissive: #CC0000; emissiveIntensity: 1.5"></a-box>
-        <a-box position="0.6 0.01 -10" width="0.03" height="0.03" depth="20" color="#880000" material="shader: flat; emissive: #880000; emissiveIntensity: 1.5"></a-box>
+        <a-box position="-0.6 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #880000; shader: flat"></a-box>
+        <a-box position="-0.3 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #CC0000; shader: flat"></a-box>
+        <a-box position="0 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #FF0000; shader: flat"></a-box>
+        <a-box position="0.3 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #CC0000; shader: flat"></a-box>
+        <a-box position="0.6 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #880000; shader: flat"></a-box>
         
         <a-entity id="gridMarkersR">
           <a-sphere position="0 0.05 -5" radius="0.05" color="#FF0000" opacity="0.6"></a-sphere>
@@ -81,37 +83,40 @@
           <a-sphere position="0 0.05 -15" radius="0.05" color="#FF0000" opacity="0.6"></a-sphere>
         </a-entity>
         
-        <!-- ADD "ENTER" prompt below TEXT label -->
-        <a-text value="TEXT" position="0 1.5 0" align="center" color="#FF0000" width="4" shader="flat"
-                animation="property: position; to: 0 1.8 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine"></a-text>
+        <a-text 
+          value="TEXT" 
+          position="0 1.5 0" 
+          align="center" 
+          color="#FF0000" 
+          width="4" 
+          shader="flat"
+          animation="property: position; to: 0 1.8 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+        </a-text>
         
-        <!-- ADD THIS NEW CLICKABLE ENTITY -->
-        <a-entity position="0 0.8 -0.3" 
-                portal-button="target: text">
-                <!-- Invisible clickable box -->
-                <a-box width="2" height="0.6" depth="0.1" 
-                        class="clickable"
-                        material="color: #000000; opacity: 0.5; transparent: true; side: double">
-                </a-box>
-                <!-- The [ ENTER ] text -->
-                <a-text value="[ ENTER ]" 
-                        align="center" 
-                        position="0 0 0.06"
-                        color="#FF0000" 
-                        width="3" 
-                        shader="flat"
-                        animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000">
-                </a-text>
+        <a-entity position="0 0.8 -0.3" portal-button="target: text">
+          <a-box 
+            width="2" 
+            height="0.6" 
+            depth="0.1" 
+            class="clickable"
+            material="color: #000000; opacity: 0.5; transparent: true; side: double">
+          </a-box>
+          <a-text 
+            value="[ ENTER ]" 
+            align="center" 
+            position="0 0 0.06"
+            color="#FF0000" 
+            width="3" 
+            shader="flat"
+            animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000">
+          </a-text>
         </a-entity>
 
       </a-entity>
 
       <!-- CENTER PATHWAY - AUDIO (NEON GREEN) -->
-      <a-entity id="pathwayAudio" 
-                class="pathway" 
-                position="0 0 0">
+      <a-entity id="pathwayAudio" class="pathway" position="0 0 0">
         
-        <!-- All your existing AUDIO pathway code -->
         <a-entity id="circlesCenter" position="0 1.6 -8">
           <a-ring position="0 0 0" radius-inner="1.5" radius-outer="1.6" color="#00FF00" opacity="0.3" material="shader: flat"></a-ring>
           <a-ring position="0 0 -3" radius-inner="1.5" radius-outer="1.6" color="#00FF00" opacity="0.2" material="shader: flat"></a-ring>
@@ -119,11 +124,11 @@
           <a-ring position="0 0 -9" radius-inner="1.5" radius-outer="1.6" color="#00FF00" opacity="0.1" material="shader: flat"></a-ring>
         </a-entity>
         
-        <a-box position="-0.6 0.01 -10" width="0.03" height="0.03" depth="20" color="#008800" material="shader: flat; emissive: #008800; emissiveIntensity: 1.5"></a-box>
-        <a-box position="-0.3 0.01 -10" width="0.03" height="0.03" depth="20" color="#00CC00" material="shader: flat; emissive: #00CC00; emissiveIntensity: 1.5"></a-box>
-        <a-box position="0 0.01 -10" width="0.03" height="0.03" depth="20" color="#00FF00" material="shader: flat; emissive: #00FF00; emissiveIntensity: 2"></a-box>
-        <a-box position="0.3 0.01 -10" width="0.03" height="0.03" depth="20" color="#00CC00" material="shader: flat; emissive: #00CC00; emissiveIntensity: 1.5"></a-box>
-        <a-box position="0.6 0.01 -10" width="0.03" height="0.03" depth="20" color="#008800" material="shader: flat; emissive: #008800; emissiveIntensity: 1.5"></a-box>
+        <a-box position="-0.6 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #008800; shader: flat"></a-box>
+        <a-box position="-0.3 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #00CC00; shader: flat"></a-box>
+        <a-box position="0 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #00FF00; shader: flat"></a-box>
+        <a-box position="0.3 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #00CC00; shader: flat"></a-box>
+        <a-box position="0.6 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #008800; shader: flat"></a-box>
         
         <a-entity id="gridMarkersG">
           <a-sphere position="0 0.05 -5" radius="0.05" color="#00FF00" opacity="0.6"></a-sphere>
@@ -131,35 +136,40 @@
           <a-sphere position="0 0.05 -15" radius="0.05" color="#00FF00" opacity="0.6"></a-sphere>
         </a-entity>
         
-        <a-text value="AUDIO" position="0 1.5 0" align="center" color="#00FF00" width="4" shader="flat"
-                animation="property: position; to: 0 1.8 -0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 500"></a-text>
-        
-        <!-- CLICKABLE ENTER BUTTON -->
-        <a-entity position="0 0.8 -0.3" 
-                portal-button="target: audio">
-        <!-- Invisible clickable box -->
-        <a-box width="2" height="0.6" depth="0.1" 
-                class="clickable"
-                material="color: #000000; opacity: 0.5; transparent: true; side: double">
-        </a-box>
-        <!-- The [ ENTER ] text -->
-        <a-text value="[ ENTER ]" 
-                align="center" 
-                position="0 0 0.06"
-                color="#00FF00" 
-                width="3" 
-                shader="flat"
-                animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000">
+        <a-text 
+          value="AUDIO" 
+          position="0 1.5 0" 
+          align="center" 
+          color="#00FF00" 
+          width="4" 
+          shader="flat"
+          animation="property: position; to: 0 1.8 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 500">
         </a-text>
+        
+        <a-entity position="0 0.8 -0.3" portal-button="target: audio">
+          <a-box 
+            width="2" 
+            height="0.6" 
+            depth="0.1" 
+            class="clickable"
+            material="color: #000000; opacity: 0.5; transparent: true; side: double">
+          </a-box>
+          <a-text 
+            value="[ ENTER ]" 
+            align="center" 
+            position="0 0 0.06"
+            color="#00FF00" 
+            width="3" 
+            shader="flat"
+            animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000">
+          </a-text>
         </a-entity>
+
       </a-entity>
 
       <!-- RIGHT PATHWAY - MOVEMENT (NEON BLUE) -->
-      <a-entity id="pathwayMovement" 
-                class="pathway" 
-                position="3.5 0 0">
+      <a-entity id="pathwayMovement" class="pathway" position="3.5 0 0">
         
-        <!-- All your existing MOVEMENT pathway code -->
         <a-entity id="circlesRight" position="0 1.6 -8">
           <a-ring position="0 0 0" radius-inner="1.5" radius-outer="1.6" color="#0000FF" opacity="0.3" material="shader: flat"></a-ring>
           <a-ring position="0 0 -3" radius-inner="1.5" radius-outer="1.6" color="#0000FF" opacity="0.2" material="shader: flat"></a-ring>
@@ -167,11 +177,11 @@
           <a-ring position="0 0 -9" radius-inner="1.5" radius-outer="1.6" color="#0000FF" opacity="0.1" material="shader: flat"></a-ring>
         </a-entity>
         
-        <a-box position="-0.6 0.01 -10" width="0.03" height="0.03" depth="20" color="#000088" material="shader: flat; emissive: #000088; emissiveIntensity: 1.5"></a-box>
-        <a-box position="-0.3 0.01 -10" width="0.03" height="0.03" depth="20" color="#0000CC" material="shader: flat; emissive: #0000CC; emissiveIntensity: 1.5"></a-box>
-        <a-box position="0 0.01 -10" width="0.03" height="0.03" depth="20" color="#0000FF" material="shader: flat; emissive: #0000FF; emissiveIntensity: 2"></a-box>
-        <a-box position="0.3 0.01 -10" width="0.03" height="0.03" depth="20" color="#0000CC" material="shader: flat; emissive: #0000CC; emissiveIntensity: 1.5"></a-box>
-        <a-box position="0.6 0.01 -10" width="0.03" height="0.03" depth="20" color="#000088" material="shader: flat; emissive: #000088; emissiveIntensity: 1.5"></a-box>
+        <a-box position="-0.6 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #000088; shader: flat"></a-box>
+        <a-box position="-0.3 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #0000CC; shader: flat"></a-box>
+        <a-box position="0 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #0000FF; shader: flat"></a-box>
+        <a-box position="0.3 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #0000CC; shader: flat"></a-box>
+        <a-box position="0.6 0.01 -10" width="0.03" height="0.03" depth="20" material="color: #000088; shader: flat"></a-box>
         
         <a-entity id="gridMarkersB">
           <a-sphere position="0 0.05 -5" radius="0.05" color="#0000FF" opacity="0.6"></a-sphere>
@@ -179,27 +189,35 @@
           <a-sphere position="0 0.05 -15" radius="0.05" color="#0000FF" opacity="0.6"></a-sphere>
         </a-entity>
         
-        <a-text value="MOVEMENT" position="0 1.5 0" align="center" color="#0000FF" width="4" shader="flat"
-                animation="property: position; to: 0 1.8 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 1000"></a-text>
-        
-        <!-- CLICKABLE ENTER BUTTON -->
-        <a-entity position="0 0.8 -0.3" 
-                portal-button="target: movement">
-        <!-- Invisible clickable box -->
-        <a-box width="2" height="0.6" depth="0.1" 
-                class="clickable"
-                material="color: #000000; opacity: 0.5; transparent: true; side: double">
-        </a-box>
-        <!-- The [ ENTER ] text -->
-        <a-text value="[ ENTER ]" 
-                align="center" 
-                position="0 0 0.06"
-                color="#0000FF" 
-                width="3" 
-                shader="flat"
-                animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000">
+        <a-text 
+          value="MOVEMENT" 
+          position="0 1.5 0" 
+          align="center" 
+          color="#0000FF" 
+          width="4" 
+          shader="flat"
+          animation="property: position; to: 0 1.8 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine; delay: 1000">
         </a-text>
-  </a-entity>
+        
+        <a-entity position="0 0.8 -0.3" portal-button="target: movement">
+          <a-box 
+            width="2" 
+            height="0.6" 
+            depth="0.1" 
+            class="clickable"
+            material="color: #000000; opacity: 0.5; transparent: true; side: double">
+          </a-box>
+          <a-text 
+            value="[ ENTER ]" 
+            align="center" 
+            position="0 0 0.06"
+            color="#0000FF" 
+            width="3" 
+            shader="flat"
+            animation="property: opacity; from: 0.5; to: 1; dir: alternate; loop: true; dur: 1000">
+          </a-text>
+        </a-entity>
+
       </a-entity>
 
       <!-- ENVIRONMENT -->
@@ -207,295 +225,558 @@
       <a-sky color="#000000"></a-sky>
       
     </a-entity>
+    <!-- END INTRO SCENE -->
 
 
     <!-- ============================================ -->
-    <!-- TEXT SCENE - New environment for TEXT pathway -->
+    <!-- TEXT SCENE -->
     <!-- ============================================ -->
-
-    <!-- TEXT SCENE - Cyberpunk Grid Environment with Neon Question Boxes -->
     <a-entity id="text-scene" visible="false">
     
-    <!-- Dark Sky -->
-    <a-sky color="#000000"></a-sky>
-    
-    <!-- Red Grid Floor -->
-    <a-entity grid-floor="size: 100; divisions: 100; colorGrid: #ff0000; colorCenterLine: #ff3333" 
-                position="0 0 0">
-    </a-entity>
-    
-    <!-- Lighting -->
-    <a-light type="ambient" intensity="0.3" color="#220000"></a-light>
-    <a-light type="point" position="0 5 0" intensity="0.5" color="#ff0000" distance="50"></a-light>
-    
-    <!-- Floating Cyber Eye in Center -->
-    <a-entity 
-      gltf-model="#cyber-eye"
-      position="0 8 0"
-      scale="3 3 3"
-      animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
-      animation__float="property: position; to: 0 7 0; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine">
-        <!-- Light inside the eye entity -->
+      <!-- Dark Sky -->
+      <a-sky color="#000000"></a-sky>
+      
+      <!-- Red Grid Floor -->
+      <a-entity 
+        grid-floor="size: 100; divisions: 100; colorGrid: #ff0000; colorCenterLine: #ff3333" 
+        position="0 0 0">
+      </a-entity>
+      
+      <!-- Lighting -->
+      <a-light type="ambient" intensity="0.3" color="#220000"></a-light>
+      <a-light type="point" position="0 5 0" intensity="0.5" color="#ff0000" distance="50"></a-light>
+      
+      <!-- Floating Cyber Eye in Center -->
+      <a-entity 
+        gltf-model="#cyber-eye"
+        position="0 8 0"
+        scale="3 3 3"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
+        animation__float="property: position; to: 0 7 0; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine">
         <a-light type="point" color="#ff0000" intensity="2" distance="30"></a-light>
-    </a-entity>
+      </a-entity>
 
-    <!-- EXIT Button - Below the Eye -->
-     <a-entity id="exit-button" position="0 2 0" portal-button="target: intro">
-        <!-- Button background -->
+      <!-- EXIT Button -->
+      <a-entity id="exit-button" position="0 2 0" portal-button="target: intro">
         <a-box 
-        width="2" 
-        height="0.6" 
-        depth="0.2" 
-        color="#ff0000" 
-        class="clickable"
-        opacity="0.9"
-        material="shader: flat; emissive: #ff0000; emissiveIntensity: 1">
+          width="2" 
+          height="0.6" 
+          depth="0.2" 
+          class="clickable"
+          material="color: #ff0000; shader: flat">
         </a-box>
-        
-        <!-- Glow border -->
         <a-box 
-        width="2.1" 
-        height="0.7" 
-        depth="0.15" 
-        position="0 0 -0.05"
-        color="#ff0000"
-        material="shader: flat; emissive: #ff0000; emissiveIntensity: 2; opacity: 0.4">
+          width="2.1" 
+          height="0.7" 
+          depth="0.15" 
+          position="0 0 -0.05"
+          material="color: #ff0000; shader: flat; opacity: 0.4">
         </a-box>
-        
-        <!-- Button text -->
         <a-text 
-        value="EXIT" 
+          value="EXIT" 
+          align="center" 
+          position="0 0 0.12" 
+          color="#000000"
+          width="5">
+        </a-text>
+      </a-entity>
+
+      <!-- Environment Title -->
+      <a-text 
+        value="TEXT REALM" 
         align="center" 
-        position="0 0 0.12" 
-        color="#000000"
-        width="5">
+        position="0 12 0" 
+        color="#ff0000" 
+        width="20"
+        opacity="0.8">
+      </a-text>
+      
+      <!-- CORNER 1: TECHNOLOGICAL FEAR (Front-Left) -->
+      <a-entity id="corner1" position="-12 0 -12" rotation="0 45 0">
+        <a-plane 
+          width="8" 
+          height="5" 
+          position="0 4 0"
+          color="#000000"
+          opacity="0.7">
+          <a-plane 
+            width="8.2" 
+            height="5.2" 
+            position="0 0 -0.01"
+            material="color: #ff0000; shader: flat; opacity: 0.4">
+          </a-plane>
+        </a-plane>
+        
+        <a-text 
+          value="What scares you the most about technology?" 
+          align="center" 
+          position="0 4 0.1" 
+          color="#ff0000" 
+          width="6"
+          line-height="50"
+          wrap-count="20">
         </a-text>
-    </a-entity>
-
-    <!-- Environment Title -->
-    <a-text value="TEXT REALM" 
-            align="center" 
-            position="0 12 0" 
+        
+        <a-entity 
+          position="0 1.2 0"
+          question-responder="questionId: fear; questionText: What scares you the most about technology?">
+          <a-box 
             color="#ff0000" 
-            width="20"
-            opacity="0.8">
-    </a-text>
-    
-    <!-- ============================================ -->
-    <!-- CORNER 1: TECHNOLOGICAL FEAR (Front-Left) -->
-    <!-- ============================================ -->
-    <a-entity id="corner1" position="-12 0 -12" rotation="0 45 0">
-        
-        <!-- Neon Box Frame -->
-        <a-plane width="8" 
-                height="5" 
-                position="0 4 0"
-                color="#000000"
-                opacity="0.7">
-        <!-- Neon border glow -->
-        <a-plane width="8.2" 
-                height="5.2" 
-                position="0 0 -0.01"
-                color="#ff0000"
-                opacity="0.4"
-                material="shader: flat; emissive: #ff0000; emissiveIntensity: 2">
-        </a-plane>
-        </a-plane>
-        
-        <!-- Question Text -->
-        <a-text value="What scares you the most about technology?" 
-                align="center" 
-                position="0 4 0.1" 
-                color="#ff0000" 
-                width="6"
-                line-height="50"
-                wrap-count="20">
-        </a-text>
-        
-        <!-- Interact button below box -->
-        <a-entity position="0 1.2 0"
-                question-responder="questionId: fear; questionText: What scares you the most about technology?">
-        <a-box color="#ff0000" 
-                depth="0.2" 
-                height="0.8" 
-                width="3"
-                opacity="0.8"
-                class="clickable"
-                material="shader: flat; emissive: #ff0000; emissiveIntensity: 1">
-        </a-box>
-        <a-text value="RESPOND" 
-                align="center" 
-                position="0 0 0.11" 
-                color="#000000" 
-                width="6">
-        </a-text>
+            depth="0.2" 
+            height="0.8" 
+            width="3"
+            class="clickable"
+            material="shader: flat">
+          </a-box>
+          <a-text 
+            value="RESPOND" 
+            align="center" 
+            position="0 0 0.11" 
+            color="#000000" 
+            width="6">
+          </a-text>
         </a-entity>
         
-        <!-- Container for responses -->
         <a-entity id="responses-fear" position="0 2 5"></a-entity>
-    </a-entity>
-    
-    <!-- ============================================ -->
-    <!-- CORNER 2: DATA IMAGINATION (Front-Right) -->
-    <!-- ============================================ -->
-    <a-entity id="corner2" position="12 0 -12" rotation="0 -45 0">
-        
-        <!-- Neon Box Frame -->
-        <a-plane width="8" 
-                height="5" 
-                position="0 4 0"
-                color="#000000"
-                opacity="0.7">
-        <a-plane width="8.2" 
-                height="5.2" 
-                position="0 0 -0.01"
-                color="#ff0000"
-                opacity="0.4"
-                material="shader: flat; emissive: #ff0000; emissiveIntensity: 2">
-        </a-plane>
+      </a-entity>
+      
+      <!-- CORNER 2: DATA IMAGINATION (Front-Right) -->
+      <a-entity id="corner2" position="12 0 -12" rotation="0 -45 0">
+        <a-plane 
+          width="8" 
+          height="5" 
+          position="0 4 0"
+          color="#000000"
+          opacity="0.7">
+          <a-plane 
+            width="8.2" 
+            height="5.2" 
+            position="0 0 -0.01"
+            material="color: #ff0000; shader: flat; opacity: 0.4">
+          </a-plane>
         </a-plane>
         
-        <!-- Question Text -->
-        <a-text value="What is data to you?" 
-                align="center" 
-                position="0 4 0.1" 
-                color="#ff0000" 
-                width="6"
-                line-height="50"
-                wrap-count="20">
+        <a-text 
+          value="What is data to you?" 
+          align="center" 
+          position="0 4 0.1" 
+          color="#ff0000" 
+          width="6"
+          line-height="50"
+          wrap-count="20">
         </a-text>
         
-        <!-- Interact button -->
-        <a-entity position="0 1.2 0"
-                question-responder="questionId: data; questionText: How do you define data?">
-        <a-box color="#ff0000" 
-                depth="0.2" 
-                height="0.8" 
-                width="3"
-                opacity="0.8"
-                class="clickable"
-                material="shader: flat; emissive: #ff0000; emissiveIntensity: 1">
-        </a-box>
-        <a-text value="RESPOND" 
-                align="center" 
-                position="0 0 0.11" 
-                color="#000000" 
-                width="6">
-        </a-text>
+        <a-entity 
+          position="0 1.2 0"
+          question-responder="questionId: data; questionText: How do you define data?">
+          <a-box 
+            color="#ff0000" 
+            depth="0.2" 
+            height="0.8" 
+            width="3"
+            class="clickable"
+            material="shader: flat">
+          </a-box>
+          <a-text 
+            value="RESPOND" 
+            align="center" 
+            position="0 0 0.11" 
+            color="#000000" 
+            width="6">
+          </a-text>
         </a-entity>
         
-        <!-- Container for responses -->
         <a-entity id="responses-data" position="0 2 5"></a-entity>
-    </a-entity>
-    
-    <!-- ============================================ -->
-    <!-- CORNER 3: DISASSOCIATION (Back-Left) -->
-    <!-- ============================================ -->
-    <a-entity id="corner3" position="-12 0 12" rotation="0 135 0">
-        
-        <!-- Neon Box Frame -->
-        <a-plane width="8" 
-                height="5" 
-                position="0 4 0"
-                color="#000000"
-                opacity="0.7">
-        <a-plane width="8.2" 
-                height="5.2" 
-                position="0 0 -0.01"
-                color="#ff0000"
-                opacity="0.4"
-                material="shader: flat; emissive: #ff0000; emissiveIntensity: 2">
-        </a-plane>
+      </a-entity>
+      
+      <!-- CORNER 3: DISASSOCIATION (Back-Left) -->
+      <a-entity id="corner3" position="-12 0 12" rotation="0 135 0">
+        <a-plane 
+          width="8" 
+          height="5" 
+          position="0 4 0"
+          color="#000000"
+          opacity="0.7">
+          <a-plane 
+            width="8.2" 
+            height="5.2" 
+            position="0 0 -0.01"
+            material="color: #ff0000; shader: flat; opacity: 0.4">
+          </a-plane>
         </a-plane>
         
-        <!-- Question Text -->
-        <a-text value="What technology makes you disassociate from the present?" 
-                align="center" 
-                position="0 4 0.1" 
-                color="#ff0000" 
-                width="6"
-                line-height="50"
-                wrap-count="20">
+        <a-text 
+          value="What technology makes you disassociate from the present?" 
+          align="center" 
+          position="0 4 0.1" 
+          color="#ff0000" 
+          width="6"
+          line-height="50"
+          wrap-count="20">
         </a-text>
 
-        <a-entity position="0 1.2 0" 
+        <a-entity 
+          position="0 1.2 0" 
           question-responder="questionId: disassociate; questionText: What technology makes you disassociate from the present the most?">
-        <a-box color="#ff0000" 
-                depth="0.2" 
-                height="0.8" 
-                width="3"
-                opacity="0.8"
-                class="clickable"  
-                material="shader: flat; emissive: #ff0000; emissiveIntensity: 1">
-        </a-box>
-        <a-text value="RESPOND" 
-                align="center" 
-                position="0 0 0.11" 
-                color="#000000" 
-                width="6">
-        </a-text>
+          <a-box 
+            color="#ff0000" 
+            depth="0.2" 
+            height="0.8" 
+            width="3"
+            class="clickable"  
+            material="shader: flat">
+          </a-box>
+          <a-text 
+            value="RESPOND" 
+            align="center" 
+            position="0 0 0.11" 
+            color="#000000" 
+            width="6">
+          </a-text>
         </a-entity>
         
-        <!-- Container for responses -->
         <a-entity id="responses-disassociate" position="0 2 5"></a-entity>
-    </a-entity>
-    
-    <!-- ============================================ -->
-    <!-- CORNER 4: QUOTES (Back-Right) -->
-    <!-- ============================================ -->
-     <a-entity id="corner4" position="12 0 12" rotation="0 -135 0">
-        <!-- Quiz Game Component -->
+      </a-entity>
+      
+      <!-- CORNER 4: QUOTES (Back-Right) -->
+      <a-entity id="corner4" position="12 0 12" rotation="0 -135 0">
         <a-entity text-quiz></a-entity>
-     </a-entity>
+      </a-entity>
 
-    <!-- ============================================ -->
-    <!-- AUDIO SCENE (placeholder) -->
-    <!-- ============================================ -->
-     <a-entity id="audio-scene" visible="false">
-        <!-- Voice-reactive spheres (neon green) -->
-        <a-entity audio-spheres="sensitivity: 40; maxSpheres: 15"></a-entity>
-        <!-- Audio-reactive spheres (neon green) -->
-        <a-entity music-spheres="count: 8; radius: 15; audioFiles: audio/cyber.mp3, audio/augmentation.mp3"></a-entity>
-        <!-- Your existing audio scene content -->
-        <a-entity grid-floor="size: 50; divisions: 50; colorGrid: #00ff00"></a-entity>
-        <a-sky color="#000000"></a-sky>
-        <a-text value="AUDIO REALM" align="center" position="0 3 -8" color="#00ff00" width="12"></a-text>
-        
-        <a-entity portal-button="target: intro" position="0 1.5 5" class="clickable">
-        <a-box color="#00ff00" depth="0.2" height="1" width="3" opacity="0.8"></a-box>
-        <a-text value="<< BACK" align="center" position="0 0 0.11" color="#000000" width="6"></a-text>
-        </a-entity>
     </a-entity>
+    <!-- END TEXT SCENE -->
+
 
     <!-- ============================================ -->
-    <!-- MOVEMENT SCENE (placeholder) -->
+    <!-- AUDIO SCENE -->
+    <!-- ============================================ -->
+    <a-entity id="audio-scene" visible="false">
+      
+      <a-sky color="#000000"></a-sky>
+      
+      <a-entity grid-floor="size: 50; divisions: 50; colorGrid: #00ff00"></a-entity>
+      
+      <!-- Lighting -->
+      <a-light type="ambient" intensity="0.3" color="#002200"></a-light>
+      <a-light type="point" position="0 10 0" intensity="1" color="#00ff00" distance="50"></a-light>
+      
+      <!-- Voice-reactive spheres -->
+      <a-entity audio-spheres="sensitivity: 40; maxSpheres: 15"></a-entity>
+      
+      <!-- Music spheres -->
+      <a-entity music-spheres="count: 8; radius: 15; audioFiles: audio/cyber.mp3, audio/augmentation.mp3"></a-entity>
+      
+      <a-text 
+        value="AUDIO REALM" 
+        align="center" 
+        position="0 3 -8" 
+        color="#00ff00" 
+        width="12">
+      </a-text>
+      
+      <!-- Back Button -->
+      <a-entity portal-button="target: intro" position="0 1.5 5">
+        <a-box 
+          color="#00ff00" 
+          depth="0.2" 
+          height="1" 
+          width="3" 
+          class="clickable"
+          material="shader: flat">
+        </a-box>
+        <a-text 
+          value="<< BACK" 
+          align="center" 
+          position="0 0 0.11" 
+          color="#000000" 
+          width="6">
+        </a-text>
+      </a-entity>
+
+    </a-entity>
+    <!-- END AUDIO SCENE -->
+
+
+    <!-- ============================================ -->
+    <!-- MOVEMENT SCENE -->
     <!-- ============================================ -->
     <a-entity id="movement-scene" visible="false">
-      <a-entity grid-floor="size: 50; divisions: 50; colorGrid: #0000ff"></a-entity>
-      <a-sky color="#000000"></a-sky>
-      <a-text value="MOVEMENT REALM" align="center" position="0 3 -8" color="#0000ff" width="12"></a-text>
+
+      <!-- Dark Blue Sky -->
+      <a-sky color="#000015"></a-sky>
       
-      <a-entity portal-button="target: intro" position="0 1.5 5" class="clickable">
-        <a-box color="#0000ff" depth="0.2" height="1" width="3" opacity="0.8"></a-box>
-        <a-text value="<< BACK" align="center" position="0 0 0.11" color="#000000" width="6"></a-text>
+      <!-- Blue Grid Floor -->
+      <a-entity 
+        grid-floor="size: 100; divisions: 100; colorGrid: #0044ff; colorCenterLine: #00ffff" 
+        position="0 0 0">
       </a-entity>
+      
+      <!-- Lighting -->
+      <a-light type="ambient" intensity="0.4" color="#002244"></a-light>
+      <a-light type="point" position="0 10 0" intensity="1.5" color="#00ffff" distance="50"></a-light>
+      <a-light type="point" position="-10 5 -10" intensity="1" color="#0066ff" distance="30"></a-light>
+      <a-light type="point" position="10 5 -10" intensity="0.8" color="#ff00ff" distance="30"></a-light>
+      <a-light type="point" position="0 3 -10" intensity="1" color="#ffffff" distance="20"></a-light>
+      
+      <!-- Environment Title -->
+      <a-text 
+        value="MOVEMENT REALM" 
+        align="center" 
+        position="0 8 -15" 
+        color="#00ffff" 
+        width="20"
+        opacity="0.8">
+      </a-text>
+      
+      <!-- Subtitle -->
+      <a-text 
+        value="Move to leave trails • Guess Real vs AI" 
+        align="center" 
+        position="0 6.5 -15" 
+        color="#0088ff" 
+        width="12"
+        opacity="0.6">
+      </a-text>
+      
+      <!-- DECORATIVE DATA STREAMS -->
+      <a-entity id="data-streams-blue">
+        <a-cylinder position="-8 5 -12" radius="0.03" height="10" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
+        <a-cylinder position="-5 7 -18" radius="0.03" height="14" material="color: #0066ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="6 4 -15" radius="0.03" height="8" material="color: #00ffff; shader: flat" opacity="0.7"></a-cylinder>
+        <a-cylinder position="10 6 -20" radius="0.03" height="12" material="color: #0088ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="-12 5 -8" radius="0.03" height="10" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
+        <a-cylinder position="8 8 -10" radius="0.03" height="16" material="color: #0044ff; shader: flat" opacity="0.5"></a-cylinder>
+      </a-entity>
+      
+      <!-- IMAGE GUESSING GAME AREA -->
+      <a-entity id="image-game-area" position="0 0 -10" image-guesser>
+        
+        <!-- Main Image Display Frame -->
+        <a-entity id="image-display" position="0 4 0">
+          
+          <!-- Outer glow frame -->
+          <a-box 
+            position="0 0 -0.1"
+            width="5.5" 
+            height="4.2" 
+            depth="0.05"
+            material="color: #0066ff; shader: flat; opacity: 0.6">
+          </a-box>
+          
+          <!-- Inner dark frame -->
+          <a-box 
+            position="0 0 -0.05"
+            width="5.2" 
+            height="3.9" 
+            depth="0.1"
+            material="color: #000033">
+          </a-box>
+          
+          <!-- Current image placeholder -->
+          <a-plane 
+            id="current-game-image"
+            width="5" 
+            height="3.7"
+            position="0 0 0.01"
+            material="shader: flat; color: #ffffff">
+          </a-plane>
+          
+          
+          <!-- Question prompt -->
+          <a-text
+            id="game-question"
+            value="REAL or AI?"
+            align="center"
+            position="0 3.25 0"
+            color="#00ffff"
+            width="10">
+          </a-text>
+          
+          <!-- Round counter -->
+          <a-text
+            id="round-counter"
+            value="5 rounds"
+            align="center"
+            position="0 -2.5 0"
+            color="#0088ff"
+            width="5">
+          </a-text>
+          
+        </a-entity>
+        
+        <!-- Answer Buttons -->
+        <a-entity id="answer-buttons" position="0 1.2 3">
+          
+          <!-- REAL Button (Left) - Hidden until game starts -->
+          <a-entity 
+            id="btn-real"
+            position="-2.5 0 0"
+            visible="false">
+            
+            <a-box 
+              width="2.2" 
+              height="1" 
+              depth="0.15"
+              position="0 0 -0.05"
+              material="color: #00ff00; shader: flat; opacity: 0.3">
+            </a-box>
+            
+            <a-box 
+              class="clickable"
+              width="2" 
+              height="0.8" 
+              depth="0.2"
+              material="color: #004400"
+              game-answer-button="answer: real">
+            </a-box>
+            
+            <a-text 
+              value="REAL" 
+              align="center" 
+              position="0 0 0.11"
+              color="#00ff00"
+              width="5">
+            </a-text>
+          </a-entity>
+          
+          <!-- AI Button (Right) - Hidden until game starts -->
+          <a-entity 
+            id="btn-ai"
+            position="2.5 0 0"
+            visible="false">
+            
+            <a-box 
+              width="2.2" 
+              height="1" 
+              depth="0.15"
+              position="0 0 -0.05"
+              material="color: #ff00ff; shader: flat; opacity: 0.3">
+            </a-box>
+            
+            <a-box 
+              class="clickable"
+              width="2" 
+              height="0.8" 
+              depth="0.2"
+              material="color: #440044"
+              game-answer-button="answer: ai">
+            </a-box>
+            
+            <a-text 
+              value="AI" 
+              align="center" 
+              position="0 0 0.11"
+              color="#ff00ff"
+              width="5">
+            </a-text>
+          </a-entity>
+          
+          <!-- START Button (shown initially) -->
+          <a-entity 
+            id="btn-start"
+            position="0 0 0"
+            visible="true">
+            
+            <a-box 
+              width="3"
+              height="1.2"
+              depth="0.15"
+              position="0 0 -0.05"
+              material="color: #00ffff; shader: flat; opacity: 0.4">
+            </a-box>
+            
+            <a-box 
+              id="start-clickable"
+              class="clickable"
+              width="2.8"
+              height="1"
+              depth="0.2"
+              material="color: #006666"
+              start-game-button>
+            </a-box>
+            
+            <a-text 
+              value="START"
+              align="center"
+              position="0 0 0.11"
+              color="#00ffff"
+              width="8">
+            </a-text>
+          </a-entity>
+          
+        </a-entity>
+        
+        <!-- Feedback Display -->
+        <a-entity id="game-feedback" position="0 6.5 0" visible="false">
+          <a-text
+            id="feedback-text"
+            value=""
+            align="center"
+            color="#ffffff"
+            width="12">
+          </a-text>
+        </a-entity>
+        
+        <!-- Score Display (hidden initially) -->
+        <a-entity id="score-display" position="0 8.0 0">
+          <a-text
+            id="score-text"
+            value=""
+            align="center"
+            color="#00ffff"
+            width="8">
+          </a-text>
+        </a-entity>
+        
+      </a-entity>
+      
+      <!-- EXIT BUTTON -->
+      <a-entity id="movement-exit" position="0 1.5 8">
+        <a-box 
+          width="3.2" 
+          height="1.1" 
+          depth="0.15"
+          position="0 0 -0.05"
+          material="color: #0066ff; shader: flat; opacity: 0.4">
+        </a-box>
+        
+        <a-box 
+          width="3" 
+          height="0.9" 
+          depth="0.2" 
+          class="clickable"
+          portal-button="target: intro"
+          material="color: #003366; shader: flat">
+        </a-box>
+        
+        <a-text 
+          value="<< EXIT" 
+          align="center" 
+          position="0 0 0.12" 
+          color="#00ffff"
+          width="6">
+        </a-text>
+      </a-entity>
+      
     </a-entity>
+    <!-- END MOVEMENT SCENE -->
 
   </a-scene>
 
   <!-- JAVASCRIPT FILES -->
-   <script src="grid-floor.js"></script>
-   <script src="portal-button.js"></script>
-   <script src="vr-keyboard.js"></script>
-   <script src="question-responder.js"></script>
-   <script src="text-quiz.js"></script>
-   <script src="scene-manager.js"></script>
-   <script src="player.js"></script>
-   <script src="pathways.js"></script>
-   <script src="audio-spheres.js"></script>
-   <script src="music-spheres.js"></script>
-  <!-- <script src="data-fragments.js"></script> -->
-  <!-- <script src="vr-scene.js"></script> -->
+  <script src="grid-floor.js"></script>
+  <script src="portal-button.js"></script>
+  <script src="vr-keyboard.js"></script>
+  <script src="question-responder.js"></script>
+  <script src="text-quiz.js"></script>
+  <script src="scene-manager.js"></script>
+  <script src="player.js"></script>
+  <script src="pathways.js"></script>
+  <script src="audio-spheres.js"></script>
+  <script src="music-spheres.js"></script>
+  <script src="movement-trail.js"></script>
+  <script src="image-guesser.js"></script>
+
   <script>
     setTimeout(() => {
       const scene = document.querySelector('a-scene');
@@ -505,5 +786,6 @@
       console.log('All components on scene:', Object.keys(scene.components));
     }, 4000);
   </script>
+
 </body>
 </html>

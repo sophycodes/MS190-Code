@@ -460,19 +460,32 @@
       <a-light type="ambient" intensity="0.3" color="#002200"></a-light>
       <a-light type="point" position="0 10 0" intensity="1" color="#00ff00" distance="50"></a-light>
       
-      <!-- Voice-reactive spheres -->
-      <a-entity audio-spheres="sensitivity: 40; maxSpheres: 15"></a-entity>
+      <!-- Floating Cyber Eye in Center -->
+      <a-entity 
+        gltf-model="#cyber-eye"
+        position="0 8 0"
+        scale="3 3 3"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
+        animation__float="property: position; to: 0 4 0; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine">
+        <a-light type="point" color="#00ff00" intensity="2" distance="30"></a-light>
+      </a-entity>
       
-      <!-- Music spheres -->
-      <a-entity music-spheres="count: 8; radius: 15; audioFiles: audio/cyber.mp3, audio/augmentation.mp3"></a-entity>
-      
+      <!-- Environment Title (above eye) -->
       <a-text 
         value="AUDIO REALM" 
         align="center" 
-        position="0 3 -8" 
+        position="0 12 0" 
         color="#00ff00" 
-        width="12">
+        width="20"
+        opacity="0.8">
       </a-text>
+      
+      
+      <!-- Voice-reactive spheres -->
+      <a-entity audio-spheres="sensitivity: 50; maxSpheres: 15"></a-entity>
+      
+      <!-- Music spheres -->
+      <a-entity music-spheres="count: 8; radius: 15; audioFiles: audio/cyber.mp3, audio/augmentation.mp3"></a-entity>
       
       <!-- Back Button -->
       <a-entity portal-button="target: intro" position="0 1.5 5">
@@ -485,7 +498,7 @@
           material="shader: flat">
         </a-box>
         <a-text 
-          value="<< BACK" 
+          value="EXIT" 
           align="center" 
           position="0 0 0.11" 
           color="#000000" 
@@ -517,25 +530,27 @@
       <a-light type="point" position="-10 5 -10" intensity="1" color="#0066ff" distance="30"></a-light>
       <a-light type="point" position="10 5 -10" intensity="0.8" color="#ff00ff" distance="30"></a-light>
       <a-light type="point" position="0 3 -10" intensity="1" color="#ffffff" distance="20"></a-light>
+        
       
+      <!-- Floating Cyber Eye in Center -->
+      <a-entity 
+        gltf-model="#cyber-eye"
+        position="0 8 0"
+        scale="3 3 3"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
+        animation__float="property: position; to: 0 4 0; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine">
+        <a-light type="point" color="#0000ff" intensity="2" distance="30"></a-light>
+      </a-entity>
+
+
       <!-- Environment Title -->
       <a-text 
-        value="MOVEMENT REALM" 
+        value="IMAGE REALM" 
         align="center" 
-        position="0 8 -15" 
+        position="0 12 0" 
         color="#00ffff" 
         width="20"
         opacity="0.8">
-      </a-text>
-      
-      <!-- Subtitle -->
-      <a-text 
-        value="Move to leave trails • Guess Real vs AI" 
-        align="center" 
-        position="0 6.5 -15" 
-        color="#0088ff" 
-        width="12"
-        opacity="0.6">
       </a-text>
       
       <!-- DECORATIVE DATA STREAMS -->
@@ -581,13 +596,22 @@
             material="shader: flat; color: #ffffff">
           </a-plane>
           
+          <!-- Loading text / Start prompt -->
+          <a-text
+            id="loading-text"
+            value="Click START to begin!"
+            align="center"
+            position="0 0 0.02"
+            color="#00ffff"
+            width="6">
+          </a-text>
           
           <!-- Question prompt -->
           <a-text
             id="game-question"
-            value="REAL or AI?"
+            value="Can you tell REAL from AI?"
             align="center"
-            position="0 3.25 0"
+            position="0 2.5 0"
             color="#00ffff"
             width="10">
           </a-text>
@@ -707,7 +731,7 @@
         </a-entity>
         
         <!-- Feedback Display -->
-        <a-entity id="game-feedback" position="0 6.5 0" visible="false">
+        <a-entity id="game-feedback" position="0 5.5 0" visible="false">
           <a-text
             id="feedback-text"
             value=""
@@ -718,7 +742,7 @@
         </a-entity>
         
         <!-- Score Display (hidden initially) -->
-        <a-entity id="score-display" position="0 8.0 0">
+        <a-entity id="score-display" position="0 7.5 0">
           <a-text
             id="score-text"
             value=""
@@ -750,7 +774,7 @@
         </a-box>
         
         <a-text 
-          value="<< EXIT" 
+          value="EXIT" 
           align="center" 
           position="0 0 0.12" 
           color="#00ffff"

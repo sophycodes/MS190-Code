@@ -45,9 +45,9 @@ AFRAME.registerComponent('scene-manager', {
       this.scenes[sceneName].setAttribute('visible', true);
       this.data.currentScene = sceneName;
       
-      // Reset player position when going back to intro
       if (sceneName === 'intro') {
-        this.resetPlayerPosition();
+        window.location.reload();  // <-- just reload page (clean reset)
+        return;
       }
       
       // Emit event for other systems to react
@@ -66,34 +66,33 @@ AFRAME.registerComponent('scene-manager', {
   },
   
   resetPlayerPosition: function() {
-    const player = document.querySelector('#player');
-    const camera = document.querySelector('a-camera');
-    
-    if (player) {
-      // Remove any existing animation
-      player.removeAttribute('animation');
+      const player = document.querySelector('#player');
+      const camera = document.querySelector('a-camera');
       
-      // Reset position immediately
-      player.object3D.position.set(0.0, -0.8, 5.0);
-      player.object3D.rotation.set(0, 0, 0);
-      
-      // Also reset camera rotation (the look direction)
-      if (camera) {
-        camera.object3D.rotation.set(0, 0, 0);
+      if (player) {
+        // Remove any existing animation
+        player.removeAttribute('animation');
         
-        // Reset the look-controls if present
-        if (camera.components['look-controls']) {
-          camera.components['look-controls'].pitchObject.rotation.x = 0;
-          camera.components['look-controls'].yawObject.rotation.y = 0;
-        }
+        // Reset player position
+        player.object3D.position.set(0.0, -0.4, 4.5);
+        player.object3D.rotation.set(0, 0, 0);
+        player.setAttribute('position', '0.0 -0.4 4.5');
+        player.setAttribute('rotation', '0 0 0');
       }
       
-      // Force A-Frame to sync
-      player.setAttribute('position', '0.0 -0.4 4.5');
+      if (camera && camera.components['look-controls']) {
+        // Properly reset look-controls by removing and re-adding
+        camera.removeAttribute('look-controls');
+        
+        // Small delay then re-add look-controls
+        setTimeout(() => {
+          camera.setAttribute('look-controls', '');
+          console.log('Camera and look-controls fully reset');
+        }, 100);
+      }
       
-      console.log('Player position and camera reset');
+      console.log('Player position and rotation reset to start');
     }
-  }
 });
 
 console.log('scene-manager component registered');

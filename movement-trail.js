@@ -2,7 +2,17 @@
  * movement-trail.js - Neon Ghost Trail Effect for Movement Realm
  * Creates flowing wireframe trails that follow user movement
  * Inspired by long-exposure light painting photography
+ * 
+ * ONLY ACTIVE IN MOVEMENT REALM
  */
+
+// ============================================
+// HELPER FUNCTION - Check if in Movement Scene
+// ============================================
+function isInMovementScene() {
+  const movementScene = document.querySelector('#movement-scene');
+  return movementScene && movementScene.getAttribute('visible') !== false;
+}
 
 // ============================================
 // TRAIL POINT - Individual point in the trail
@@ -21,15 +31,15 @@ class TrailPoint {
 // ============================================
 AFRAME.registerComponent('movement-trail', {
   schema: {
-    color: { type: 'color', default: '#00ffff' },        // Neon cyan default
-    secondaryColor: { type: 'color', default: '#ff00ff' }, // Magenta accent
-    maxPoints: { type: 'int', default: 100 },            // Trail length
-    fadeTime: { type: 'number', default: 3000 },         // ms before point fades
-    lineWidth: { type: 'number', default: 0.02 },        // Thickness of trail
-    minDistance: { type: 'number', default: 0.01 },      // Min distance to add point
-    glowIntensity: { type: 'number', default: 1.5 },     // Glow strength
-    wireframe: { type: 'boolean', default: true },       // Wireframe style
-    ribbonMode: { type: 'boolean', default: false }      // Ribbon vs line
+    color: { type: 'color', default: '#00ffff' },
+    secondaryColor: { type: 'color', default: '#ff00ff' },
+    maxPoints: { type: 'int', default: 100 },
+    fadeTime: { type: 'number', default: 3000 },
+    lineWidth: { type: 'number', default: 0.02 },
+    minDistance: { type: 'number', default: 0.01 },
+    glowIntensity: { type: 'number', default: 1.5 },
+    wireframe: { type: 'boolean', default: true },
+    ribbonMode: { type: 'boolean', default: false }
   },
 
   init: function() {
@@ -39,23 +49,16 @@ AFRAME.registerComponent('movement-trail', {
     this.trailGeometry = null;
     this.trailMaterial = null;
     
-    // Get world position initially
     this.el.object3D.getWorldPosition(this.lastPosition);
-    
-    // Create the trail mesh
     this.createTrailMesh();
-    
-    // Add to scene (not as child, so it stays in world space)
     this.el.sceneEl.object3D.add(this.trailMesh);
     
     console.log('Movement trail initialized:', this.data.color);
   },
 
   createTrailMesh: function() {
-    // Create geometry for the trail line
     this.trailGeometry = new THREE.BufferGeometry();
     
-    // Pre-allocate buffer for max points
     const positions = new Float32Array(this.data.maxPoints * 3);
     const colors = new Float32Array(this.data.maxPoints * 3);
     const opacities = new Float32Array(this.data.maxPoints);
@@ -64,7 +67,6 @@ AFRAME.registerComponent('movement-trail', {
     this.trailGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     this.trailGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
     
-    // Create glowing material
     const color = new THREE.Color(this.data.color);
     
     this.trailMaterial = new THREE.ShaderMaterial({
@@ -92,13 +94,8 @@ AFRAME.registerComponent('movement-trail', {
         varying vec3 vPosition;
         
         void main() {
-          // Base color with opacity fade
           vec3 glowColor = color * glowIntensity;
-          
-          // Add subtle pulse
           float pulse = 0.8 + 0.2 * sin(time * 2.0 + vPosition.y * 5.0);
-          
-          // Final color with glow
           gl_FragColor = vec4(glowColor * pulse, vOpacity * 0.8);
         }
       `,
@@ -107,36 +104,36 @@ AFRAME.registerComponent('movement-trail', {
       depthWrite: false
     });
     
-    // Create line mesh
     this.trailMesh = new THREE.Line(this.trailGeometry, this.trailMaterial);
     this.trailMesh.frustumCulled = false;
   },
 
   tick: function(time, deltaTime) {
-    // Update shader time
+    // ONLY RUN IN MOVEMENT SCENE
+    if (!isInMovementScene()) {
+      this.trailMesh.visible = false;
+      return;
+    }
+    this.trailMesh.visible = true;
+    
     if (this.trailMaterial) {
       this.trailMaterial.uniforms.time.value = time * 0.001;
     }
     
-    // Get current world position
     const currentPosition = new THREE.Vector3();
     this.el.object3D.getWorldPosition(currentPosition);
     
-    // Check if moved enough to add new point
     const distance = currentPosition.distanceTo(this.lastPosition);
     
     if (distance > this.data.minDistance) {
-      // Add new point
       this.points.unshift(new TrailPoint(currentPosition, time));
       this.lastPosition.copy(currentPosition);
       
-      // Remove old points
       while (this.points.length > this.data.maxPoints) {
         this.points.pop();
       }
     }
     
-    // Update point opacities and remove faded points
     const now = time;
     this.points = this.points.filter(point => {
       const age = now - point.timestamp;
@@ -144,7 +141,6 @@ AFRAME.registerComponent('movement-trail', {
       return point.opacity > 0;
     });
     
-    // Update geometry
     this.updateTrailGeometry();
   },
 
@@ -154,7 +150,6 @@ AFRAME.registerComponent('movement-trail', {
     const positions = this.trailGeometry.attributes.position.array;
     const opacities = this.trailGeometry.attributes.opacity.array;
     
-    // Update positions and opacities
     for (let i = 0; i < this.data.maxPoints; i++) {
       if (i < this.points.length) {
         const point = this.points[i];
@@ -163,12 +158,10 @@ AFRAME.registerComponent('movement-trail', {
         positions[i * 3 + 2] = point.position.z;
         opacities[i] = point.opacity;
       } else {
-        // Hide unused points
         opacities[i] = 0;
       }
     }
     
-    // Mark for update
     this.trailGeometry.attributes.position.needsUpdate = true;
     this.trailGeometry.attributes.opacity.needsUpdate = true;
     this.trailGeometry.setDrawRange(0, this.points.length);
@@ -186,8 +179,6 @@ AFRAME.registerComponent('movement-trail', {
 
 // ============================================
 // RIBBON TRAIL COMPONENT
-// Creates a ribbon/tube effect instead of lines
-// More like the reference image's flowing forms
 // ============================================
 AFRAME.registerComponent('ribbon-trail', {
   schema: {
@@ -196,7 +187,7 @@ AFRAME.registerComponent('ribbon-trail', {
     fadeTime: { type: 'number', default: 2500 },
     width: { type: 'number', default: 0.08 },
     minDistance: { type: 'number', default: 0.015 },
-    segments: { type: 'int', default: 8 }  // Ribbon segments for roundness
+    segments: { type: 'int', default: 8 }
   },
 
   init: function() {
@@ -210,7 +201,6 @@ AFRAME.registerComponent('ribbon-trail', {
   },
 
   createRibbonMesh: function() {
-    // Create tube geometry that we'll update each frame
     const curve = new THREE.CatmullRomCurve3([
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(0, 0, -0.1)
@@ -242,16 +232,13 @@ AFRAME.registerComponent('ribbon-trail', {
         varying vec3 vNormal;
         
         void main() {
-          // Fade along the ribbon length
           float fade = 1.0 - vUv.x;
-          fade = pow(fade, 0.5); // Softer fade
+          fade = pow(fade, 0.5);
           
-          // Edge glow effect
           float edge = abs(dot(vNormal, vec3(0.0, 0.0, 1.0)));
           float glow = 1.0 - edge;
           glow = pow(glow, 2.0) * 2.0;
           
-          // Wireframe-like lines along the ribbon
           float lines = sin(vUv.x * 100.0 + time * 2.0) * 0.5 + 0.5;
           lines = step(0.9, lines) * 0.5;
           
@@ -272,6 +259,13 @@ AFRAME.registerComponent('ribbon-trail', {
   },
 
   tick: function(time, deltaTime) {
+    // ONLY RUN IN MOVEMENT SCENE
+    if (!isInMovementScene()) {
+      this.ribbonMesh.visible = false;
+      return;
+    }
+    this.ribbonMesh.visible = true;
+    
     this.ribbonMaterial.uniforms.time.value = time * 0.001;
     
     const currentPosition = new THREE.Vector3();
@@ -291,22 +285,18 @@ AFRAME.registerComponent('ribbon-trail', {
       }
     }
     
-    // Filter faded points
     const now = time;
     this.points = this.points.filter(p => (now - p.timestamp) < this.data.fadeTime);
     
-    // Update ribbon geometry
     this.updateRibbon();
   },
 
   updateRibbon: function() {
     if (this.points.length < 4) return;
     
-    // Create smooth curve through points
     const curvePoints = this.points.map(p => p.position);
     const curve = new THREE.CatmullRomCurve3(curvePoints);
     
-    // Recreate tube geometry
     const newGeometry = new THREE.TubeGeometry(
       curve, 
       Math.min(this.points.length * 2, 100), 
@@ -315,7 +305,6 @@ AFRAME.registerComponent('ribbon-trail', {
       false
     );
     
-    // Update mesh geometry
     this.ribbonMesh.geometry.dispose();
     this.ribbonMesh.geometry = newGeometry;
   },
@@ -332,14 +321,12 @@ AFRAME.registerComponent('ribbon-trail', {
 
 // ============================================
 // GHOST SILHOUETTE COMPONENT
-// Creates periodic "ghost" snapshots of pose
-// Like the figure outlines in the reference
 // ============================================
 AFRAME.registerComponent('ghost-silhouette', {
   schema: {
     color: { type: 'color', default: '#00ffff' },
-    interval: { type: 'number', default: 500 },  // ms between ghosts
-    fadeTime: { type: 'number', default: 3000 }, // ms to fully fade
+    interval: { type: 'number', default: 500 },
+    fadeTime: { type: 'number', default: 3000 },
     maxGhosts: { type: 'int', default: 10 }
   },
 
@@ -347,18 +334,23 @@ AFRAME.registerComponent('ghost-silhouette', {
     this.ghosts = [];
     this.lastGhostTime = 0;
     this.ghostContainer = document.createElement('a-entity');
-    this.ghostContainer.setAttribute('id', 'ghost-container');
+    this.ghostContainer.setAttribute('id', 'ghost-container-' + Math.random().toString(36).substr(2, 9));
     this.el.sceneEl.appendChild(this.ghostContainer);
   },
 
   tick: function(time, deltaTime) {
-    // Create new ghost at interval
+    // ONLY RUN IN MOVEMENT SCENE
+    if (!isInMovementScene()) {
+      this.ghostContainer.setAttribute('visible', false);
+      return;
+    }
+    this.ghostContainer.setAttribute('visible', true);
+    
     if (time - this.lastGhostTime > this.data.interval) {
       this.createGhost(time);
       this.lastGhostTime = time;
     }
     
-    // Update and fade existing ghosts
     this.ghosts = this.ghosts.filter(ghost => {
       const age = time - ghost.timestamp;
       const opacity = 1.0 - (age / this.data.fadeTime);
@@ -379,13 +371,11 @@ AFRAME.registerComponent('ghost-silhouette', {
       oldest.el.parentNode.removeChild(oldest.el);
     }
     
-    // Get current position
     const worldPos = new THREE.Vector3();
     const worldQuat = new THREE.Quaternion();
     this.el.object3D.getWorldPosition(worldPos);
     this.el.object3D.getWorldQuaternion(worldQuat);
     
-    // Create ghost entity
     const ghost = document.createElement('a-entity');
     ghost.setAttribute('position', worldPos);
     ghost.setAttribute('rotation', {
@@ -394,7 +384,6 @@ AFRAME.registerComponent('ghost-silhouette', {
       z: THREE.MathUtils.radToDeg(new THREE.Euler().setFromQuaternion(worldQuat).z)
     });
     
-    // Simple wireframe sphere as ghost marker
     ghost.setAttribute('geometry', {
       primitive: 'icosahedron',
       radius: 0.1,
@@ -427,7 +416,6 @@ AFRAME.registerComponent('ghost-silhouette', {
 
 // ============================================
 // BODY TRAIL SYSTEM
-// Full body tracking with multiple trail points
 // ============================================
 AFRAME.registerComponent('body-trail-system', {
   schema: {
@@ -438,19 +426,16 @@ AFRAME.registerComponent('body-trail-system', {
   },
 
   init: function() {
-    // Wait for scene to be fully loaded
     this.el.sceneEl.addEventListener('loaded', () => {
       this.setupTrails();
     });
   },
 
   setupTrails: function() {
-    // Find or create tracking points
     const leftHand = document.querySelector('#leftHand, [hand-controls="hand: left"]');
     const rightHand = document.querySelector('#rightHand, [hand-controls="hand: right"]');
     const camera = document.querySelector('[camera]');
     
-    // Add trail components to hands
     if (leftHand && !leftHand.hasAttribute('ribbon-trail')) {
       leftHand.setAttribute('ribbon-trail', {
         color: this.data.leftHandColor,
@@ -479,7 +464,6 @@ AFRAME.registerComponent('body-trail-system', {
       });
     }
     
-    // Optionally add subtle head trail
     if (camera && !camera.hasAttribute('movement-trail')) {
       camera.setAttribute('movement-trail', {
         color: this.data.headColor,

@@ -9,7 +9,7 @@ console.log('=== audio-spheres.js FILE LOADED ===');
 
 AFRAME.registerComponent('audio-spheres', {
   schema: {
-    sensitivity: {type: 'number', default: 80},   // Microphone sensitivity threshold
+    sensitivity: {type: 'number', default: 35},   // Microphone sensitivity threshold
     maxSpheres: {type: 'number', default: 15},    // Maximum number of spheres
     recordDuration: {type: 'number', default: 10} // Recording duration in seconds
   },
@@ -61,17 +61,20 @@ AFRAME.registerComponent('audio-spheres', {
   tick: function() {
     if (!this.isListening || !this.analyser || this.isRecording) return;
     
-    // Get current audio level
     this.analyser.getByteFrequencyData(this.dataArray);
     
-    // Calculate average volume
     let sum = 0;
     for (let i = 0; i < this.dataArray.length; i++) {
       sum += this.dataArray[i];
     }
     const average = sum / this.dataArray.length;
     
-    // If sound detected above threshold, start recording
+    // DEBUG - log audio level every second
+    if (!this.lastLogTime || Date.now() - this.lastLogTime > 1000) {
+      console.log('Audio level:', average, '/ Threshold:', this.data.sensitivity);
+      this.lastLogTime = Date.now();
+    }
+    
     if (average > this.data.sensitivity) {
       this.startRecording();
     }
@@ -324,7 +327,9 @@ AFRAME.registerComponent('audio-spheres', {
     
     // Add click handler for playback
     const self = this;
-    sphere.addEventListener('click', function() {
+    sphere.addEventListener('click', function(evt) {
+      evt.stopPropagation();
+      console.log('Sphere clicked! hasAudio:', sphere.hasAudio, 'audioUrl:', sphere.audioUrl);
       self.playAudio(sphere);
     });
     
@@ -367,8 +372,22 @@ AFRAME.registerComponent('audio-spheres', {
   },
   
   playAudio: function(sphere) {
-    if (!sphere.hasAudio || !sphere.audioUrl || sphere.isPlaying) {
-      console.log('No audio to play or already playing');
+    console.log('playAudio called - hasAudio:', sphere.hasAudio, 'audioUrl:', sphere.audioUrl, 'isPlaying:', sphere.isPlaying);
+    
+    if (!sphere.hasAudio || !sphere.audioUrl) {
+      console.log('No audio to play');
+      return;
+    }
+    
+    if (sphere.isPlaying) {
+      console.log('Already playing, stopping...');
+      if (sphere.currentAudio) {
+        sphere.currentAudio.pause();
+        sphere.currentAudio = null;
+      }
+      sphere.isPlaying = false;
+      sphere.setAttribute('material', 'color', '#00ff00');
+      if (sphere.playIcon) sphere.playIcon.setAttribute('value', '▶');
       return;
     }
     
@@ -390,12 +409,12 @@ AFRAME.registerComponent('audio-spheres', {
     sphere.currentAudio = audio;
     
     audio.onended = () => {
+      console.log('>>> AUDIO FINISHED <<<');
       sphere.isPlaying = false;
       sphere.setAttribute('material', 'color', '#00ff00');
       if (sphere.playIcon) {
         sphere.playIcon.setAttribute('value', '▶');
       }
-      console.log('>>> AUDIO FINISHED <<<');
     };
     
     audio.onerror = (e) => {
@@ -404,9 +423,12 @@ AFRAME.registerComponent('audio-spheres', {
       sphere.setAttribute('material', 'color', '#00ff00');
     };
     
-    audio.play().catch(e => {
+    audio.play().then(() => {
+      console.log('Audio playing successfully!');
+    }).catch(e => {
       console.error('Failed to play audio:', e);
       sphere.isPlaying = false;
+      sphere.setAttribute('material', 'color', '#00ff00');
     });
   },
   

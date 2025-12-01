@@ -35,6 +35,12 @@ AFRAME.registerComponent('scene-manager', {
   switchScene: function(sceneName) {
     console.log('Switching to scene:', sceneName);
     
+    // Mute music in Audio Realm, unmute in others
+    const bgMusic = document.querySelector('#background-music');
+    if (bgMusic) {
+      bgMusic.setAttribute('sound', 'volume', sceneName === 'audio' ? 0 : 0.3);
+    }
+
     // Hide all scenes
     Object.keys(this.scenes).forEach(name => {
       this.scenes[name].setAttribute('visible', false);

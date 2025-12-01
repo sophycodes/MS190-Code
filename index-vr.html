@@ -15,8 +15,15 @@
     <!-- ASSETS -->
     <!-- ============================================ -->
     <a-assets>
+        <audio id="bg-music" src="assets/audio/cyber-background.mp3" preload="auto"></audio>
       <a-asset-item id="cyber-eye" src="assets/cyber_eye.glb"></a-asset-item>
     </a-assets>
+
+        <!-- Background Music -->
+        <a-entity id="background-music" 
+                sound="src: #bg-music; loop: true; volume: 0.3; autoplay: true"
+                position="0 0 0">
+        </a-entity>
 
     <!-- ============================================ -->
     <!-- CAMERA & PLAYER (shared across all scenes) -->

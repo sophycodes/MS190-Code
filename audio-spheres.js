@@ -8,9 +8,7 @@
 
 console.log('=== audio-spheres.js FILE LOADED ===');
 
-// Supabase Configuration
-const SUPABASE_URL = 'https://lhbfbvdjpgrihsibymkw.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoYmZidmRqcGdyaWhzaWJ5bWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5NTU5MTksImV4cCI6MjA3OTUzMTkxOX0.zNQ63iaifP-iLjGwwdzfZSd6ks_6w2aAf5YUFl5R-Zo';
+// Storage bucket name (specific to audio-spheres)
 const STORAGE_BUCKET = 'audio-recordings';
 
 AFRAME.registerComponent('audio-spheres', {
@@ -74,8 +72,8 @@ AFRAME.registerComponent('audio-spheres', {
       // Fetch all saved spheres
       const response = await fetch(`${SUPABASE_URL}/rest/v1/audio_spheres?select=*`, {
         headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
         }
       });
       
@@ -483,8 +481,8 @@ AFRAME.registerComponent('audio-spheres', {
       const uploadResponse = await fetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${filename}`, {
         method: 'POST',
         headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
           'Content-Type': sphere.audioBlob.type
         },
         body: sphere.audioBlob
@@ -507,8 +505,8 @@ AFRAME.registerComponent('audio-spheres', {
       const dbResponse = await fetch(`${SUPABASE_URL}/rest/v1/audio_spheres`, {
         method: 'POST',
         headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json',
           'Prefer': 'return=representation'
         },

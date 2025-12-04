@@ -5,12 +5,6 @@
 
 console.log('=== vr-keyboard.js FILE LOADED ===');
 
-// ============================================
-// SUPABASE CONFIGURATION - ONLY ADDITION
-// ============================================
-const SUPABASE_URL = 'https://lhbfbvdjpgrihsibymkw.supabase.co';      
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoYmZidmRqcGdyaWhzaWJ5bWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5NTU5MTksImV4cCI6MjA3OTUzMTkxOX0.zNQ63iaifP-iLjGwwdzfZSd6ks_6w2aAf5YUFl5R-Zo';
-
 const ResponseStorage = {
   async _fetch(endpoint, options = {}) {
     const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;

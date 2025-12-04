@@ -156,7 +156,7 @@ function handleSubmit() {
     inputBox.value('');
 
     setTimeout(() => {
-      window.location.href = 'index.html'; // Change to your VR HTML filename
+      window.location.href = 'index-vr.html'; // Change to your VR HTML filename
     }, 500); // 500ms delay for smooth transition
     
     console.log('User words:', userWords); // Debug

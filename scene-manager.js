@@ -41,22 +41,41 @@ AFRAME.registerComponent('scene-manager', {
       bgMusic.setAttribute('sound', 'volume', sceneName === 'audio' ? 0 : 0.3);
     }
 
-    // Hide all scenes
+    // Hide all scenes AND disable raycasting
     Object.keys(this.scenes).forEach(name => {
-      this.scenes[name].setAttribute('visible', false);
+      const scene = this.scenes[name];
+      scene.setAttribute('visible', false);
+      
+      // Disable raycasting for all clickable elements in hidden scenes
+      const clickables = scene.querySelectorAll('.clickable');
+      clickables.forEach(el => {
+        if (el.classList) {
+          el.classList.remove('clickable');
+          el.setAttribute('data-was-clickable', 'true'); // Remember it was clickable
+        }
+      });
     });
     
-    // Show target scene
+    // Show target scene AND re-enable raycasting
     if (this.scenes[sceneName]) {
-      this.scenes[sceneName].setAttribute('visible', true);
+      const targetScene = this.scenes[sceneName];
+      targetScene.setAttribute('visible', true);
+      
+      // Re-enable raycasting for clickable elements in the active scene
+      const clickables = targetScene.querySelectorAll('[data-was-clickable]');
+      clickables.forEach(el => {
+        el.classList.add('clickable');
+        el.removeAttribute('data-was-clickable');
+      });
+      
       this.data.currentScene = sceneName;
       
       if (sceneName === 'intro') {
-        window.location.reload();  // <-- just reload page (clean reset)
+        window.location.reload();
         return;
       }
       
-      // Emit event for other systems to react
+      // Emit event
       this.el.emit('sceneChanged', {newScene: sceneName});
       
       // Update SceneManager state
@@ -66,8 +85,6 @@ AFRAME.registerComponent('scene-manager', {
         SceneManager.currentState = 'IN_REALM';
         SceneManager.currentPathway = sceneName.toUpperCase();
       }
-    } else {
-      console.warn('Scene not found:', sceneName);
     }
   },
   

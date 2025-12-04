@@ -312,8 +312,18 @@ AFRAME.registerComponent('vr-keyboard', {
   },
   
   handleKeyPress: function(key) {
+
+    // Only respond if keyboard is visible
+    if (!this.keyboard || this.keyboard.getAttribute('visible') === false) {
+      console.log('Keyboard hidden, ignoring key press');
+      return;
+    }
+  
+  console.log('Key pressed:', key);
     console.log('Key pressed:', key);
+
     const display = document.querySelector(`#keyboard-display-${this.data.questionId}`);
+
     
     if (key === 'SUBMIT') {
       if (this.inputText.trim()) {
@@ -376,12 +386,25 @@ AFRAME.registerComponent('vr-keyboard', {
     this.keyboard.setAttribute('position', `${worldPos.x + xOffset} ${worldPos.y - 0.5} ${worldPos.z + zOffset}`);
     this.keyboard.setAttribute('rotation', `-30 ${yRot} 0`);
     this.keyboard.setAttribute('visible', 'true');
+
+    // Re-add clickable class to keys
+    const keys = this.keyboard.querySelectorAll('.keyboard-key');
+    keys.forEach(key => {
+      key.classList.add('clickable');
+    });
   },
     
   close: function() {
     console.log('>>> CLOSE KEYBOARD <<<', this.data.questionId);
     this.keyboard.setAttribute('visible', 'false');
-    // Move keyboard far away so it doesn't intercept clicks
+    
+    // Remove clickable class from all keys to prevent raycaster hits
+    const keys = this.keyboard.querySelectorAll('.keyboard-key');
+    keys.forEach(key => {
+      key.classList.remove('clickable');
+    });
+    
+    // Move keyboard far away
     this.keyboard.setAttribute('position', '0 -1000 0');
     this.inputText = '';
   },

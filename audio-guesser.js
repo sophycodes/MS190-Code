@@ -11,6 +11,9 @@ AFRAME.registerComponent('audio-guesser', {
   init: function() {
     console.log('>>> AUDIO GUESSER INIT <<<');
     
+    // Get reference to audio scene for visibility checks
+    this.audioScene = document.querySelector('#audio-scene');
+    
     // Game state
     this.currentRound = 0;
     this.totalRounds = 5;
@@ -84,6 +87,29 @@ AFRAME.registerComponent('audio-guesser', {
     console.log('Game pool created:', this.gamePool);
   },
   
+  isAudioSceneActive: function() {
+    // Check if audio scene is currently visible using Three.js property
+    if (!this.audioScene) {
+      this.audioScene = document.querySelector('#audio-scene');
+    }
+    
+    // Check both the attribute AND the Three.js object visibility
+    if (!this.audioScene) {
+      console.log('Audio scene element not found');
+      return false;
+    }
+    
+    const attrVisible = this.audioScene.getAttribute('visible');
+    const objVisible = this.audioScene.object3D.visible;
+    
+    const isVisible = (attrVisible !== 'false' && attrVisible !== false) && objVisible;
+    
+    if (!isVisible) {
+      console.log('Audio scene not active (attr:', attrVisible, 'obj:', objVisible, ')');
+    }
+    return isVisible;
+  },
+  
   setupUI: function() {
     // Get UI elements
     this.audioSphere = document.querySelector('#audio-play-sphere');
@@ -96,22 +122,24 @@ AFRAME.registerComponent('audio-guesser', {
     this.roundText = document.querySelector('#audio-round-text');
     this.instructionText = document.querySelector('#audio-instruction-text');
     
-    // Setup start button - use direct click on parent entity to avoid conflicts
+    // Setup start button
     if (this.btnStart) {
-      // Add click handler to parent entity instead of nested clickable
       this.btnStart.addEventListener('click', (evt) => {
+        if (!this.isAudioSceneActive()) return;
+        
         console.log('>>> AUDIO START GAME BUTTON CLICKED <<<');
         this.startGame();
-        evt.stopPropagation(); // Prevent event bubbling
+        evt.stopPropagation();
       });
-      
-      // Make parent entity itself clickable
+      // Always add clickable class - visibility check handles the logic
       this.btnStart.classList.add('clickable');
     }
     
-    // Setup play button - use direct click on parent entity
+    // Setup play button
     if (this.playButton) {
       this.playButton.addEventListener('click', (evt) => {
+        if (!this.isAudioSceneActive()) return;
+        
         console.log('Play audio clicked!');
         this.playCurrentAudio();
         evt.stopPropagation();
@@ -119,9 +147,11 @@ AFRAME.registerComponent('audio-guesser', {
       this.playButton.classList.add('clickable');
     }
     
-    // Setup answer buttons - use direct click on parent entities
+    // Setup answer buttons
     if (this.btnReal) {
       this.btnReal.addEventListener('click', (evt) => {
+        if (!this.isAudioSceneActive()) return;
+        
         console.log('Guessed REAL');
         this.submitAnswer('real');
         evt.stopPropagation();
@@ -131,6 +161,8 @@ AFRAME.registerComponent('audio-guesser', {
     
     if (this.btnAI) {
       this.btnAI.addEventListener('click', (evt) => {
+        if (!this.isAudioSceneActive()) return;
+        
         console.log('Guessed AI');
         this.submitAnswer('ai');
         evt.stopPropagation();

@@ -10,9 +10,6 @@
 // ============================================
 AFRAME.registerComponent('image-guesser', {
   init: function() {
-    // Get reference to movement scene for visibility checks
-    this.movementScene = document.querySelector('#movement-scene');
-    
     this.currentRound = 0;
     this.score = 0;
     this.totalRounds = 5;
@@ -22,26 +19,25 @@ AFRAME.registerComponent('image-guesser', {
     this.gameEnded = false;
 
     // ============================================
-    // IMAGE DATA - Using preloaded asset IDs
+    // IMAGE DATA
     // ============================================
     this.imageData = [
       // AI Generated Images
-      { src: '#ai-car', isAI: true },
-      { src: '#ai-face', isAI: true },
-      { src: '#ai-flowers', isAI: true },
-      { src: '#ai-house', isAI: true },
-      { src: '#ai-lion', isAI: true },
-      { src: '#ai-celeb', isAI: true },
-      { src: '#ai-poodle', isAI: true },
+      { src: 'assets/imgs/AI/car-AI.jpg', isAI: true },
+      { src: 'assets/imgs/AI/face-AI.png', isAI: true },
+      { src: 'assets/imgs/AI/flowers-AI.jpg', isAI: true },
+      { src: 'assets/imgs/AI/house3-AI.png', isAI: true },
+      { src: 'assets/imgs/AI/lion-AI.png', isAI: true },
+      { src: 'assets/imgs/AI/NPCeleb-AI.jpg', isAI: true },
+      { src: 'assets/imgs/AI/poodle-AI.jpeg', isAI: true },
       
       // Real Images
-      { src: '#real-car', isAI: false },
-      { src: '#real-face', isAI: false },
-      { src: '#real-flowers', isAI: false },
-      { src: '#real-house', isAI: false },
-      { src: '#real-lion', isAI: false },
-      { src: '#real-celeb', isAI: false },
-      { src: '#real-poodle', isAI: false }
+      { src: 'assets/imgs/Real/car-Real.jpg', isAI: false },
+      { src: 'assets/imgs/Real/flowers-Real.png', isAI: false },
+      { src: 'assets/imgs/Real/house-Real.jpg', isAI: false },
+      { src: 'assets/imgs/Real/lion-Real.jpeg', isAI: false },
+      { src: 'assets/imgs/Real/NPCeleb-Real.jpg', isAI: false },
+      { src: 'assets/imgs/Real/poodle-Real.png', isAI: false }
     ];
 
     // Cache DOM elements
@@ -55,8 +51,37 @@ AFRAME.registerComponent('image-guesser', {
 
     console.log('Image Guesser component initialized');
 
-    // Setup when movement scene is shown (for returning to the realm)
+    // Add click handler to START button immediately
     const self = this;
+    setTimeout(function() {
+      const startBtn = document.querySelector('#btn-start');
+      if (startBtn) {
+        // Find the clickable box inside the button
+        const clickableBox = startBtn.querySelector('.clickable') || startBtn;
+        
+        if (!clickableBox.hasAttribute('data-handler-added')) {
+          console.log('Adding click handler to START button');
+          
+          clickableBox.addEventListener('click', function() {
+            console.log('START clicked');
+            self.setupGame();
+            self.startGame();
+          });
+
+          clickableBox.addEventListener('mouseenter', function() {
+            startBtn.setAttribute('scale', '1.1 1.1 1.1');
+          });
+          
+          clickableBox.addEventListener('mouseleave', function() {
+            startBtn.setAttribute('scale', '1 1 1');
+          });
+          
+          clickableBox.setAttribute('data-handler-added', 'true');
+        }
+      }
+    }, 1000);
+
+    // Also setup when movement scene is shown (for returning to the realm)
     this.el.sceneEl.addEventListener('scene-changed', function(evt) {
       if (evt.detail && evt.detail.scene === 'movement') {
         console.log('Movement scene activated');
@@ -65,29 +90,6 @@ AFRAME.registerComponent('image-guesser', {
         }, 500);
       }
     });
-  },
-
-  isMovementSceneActive: function() {
-    // Check if movement scene is currently visible using Three.js property
-    if (!this.movementScene) {
-      this.movementScene = document.querySelector('#movement-scene');
-    }
-    
-    // Check both the attribute AND the Three.js object visibility
-    if (!this.movementScene) {
-      console.log('Movement scene element not found');
-      return false;
-    }
-    
-    const attrVisible = this.movementScene.getAttribute('visible');
-    const objVisible = this.movementScene.object3D.visible;
-    
-    const isVisible = (attrVisible !== 'false' && attrVisible !== false) && objVisible;
-    
-    if (!isVisible) {
-      console.log('Movement scene not active (attr:', attrVisible, 'obj:', objVisible, ')');
-    }
-    return isVisible;
   },
 
   setupGame: function() {
@@ -134,18 +136,36 @@ AFRAME.registerComponent('image-guesser', {
       this.feedbackEl.setAttribute('visible', false);
     }
 
-    // Show start button (component handles clicks)
+    // Show start button
     this.createStartButton();
 
     console.log('Game setup complete, waiting for player to click START');
   },
 
   createStartButton: function() {
-    // Just show the button - the start-game-button component handles all clicks
-    const startBtn = document.querySelector('#btn-start');
+    let startBtn = document.querySelector('#btn-start');
+    
     if (startBtn) {
+      // Button already exists in HTML, just add click handler if not already added
+      if (!startBtn.hasAttribute('data-handler-added')) {
+        const self = this;
+        startBtn.addEventListener('click', function() {
+          console.log('START clicked');
+          self.startGame();
+        });
+
+        // Add hover effect
+        startBtn.addEventListener('mouseenter', function() {
+          startBtn.setAttribute('scale', '1.1 1.1 1.1');
+        });
+        startBtn.addEventListener('mouseleave', function() {
+          startBtn.setAttribute('scale', '1 1 1');
+        });
+        
+        startBtn.setAttribute('data-handler-added', 'true');
+      }
+      
       startBtn.setAttribute('visible', true);
-      console.log('START button shown');
     }
   },
 
@@ -211,26 +231,15 @@ AFRAME.registerComponent('image-guesser', {
       this.feedbackEl.setAttribute('visible', false);
     }
 
-    // QUERY THE ELEMENT FRESH EACH TIME (don't rely on cached reference)
-    const imageEl = document.querySelector('#current-game-image');
-    
-    if (imageEl) {
-      console.log('🖼️ Found image element!');
-      console.log('🖼️ Setting src to:', imageData.src);
-      
-      imageEl.setAttribute('visible', true);
-      imageEl.setAttribute('material', 'src', imageData.src);
-      imageEl.setAttribute('material', 'shader', 'flat');
-      
-      console.log('🖼️ Material set:', imageEl.getAttribute('material'));
-    } else {
-      console.error('❌ Could not find #current-game-image element!');
+    // Update image
+    if (this.imageEl) {
+      this.imageEl.setAttribute('material', 'src', imageData.src);
+      this.imageEl.setAttribute('material', 'shader', 'flat');
     }
 
     // Update round counter
-    const roundCounter = document.querySelector('#round-counter');
-    if (roundCounter) {
-      roundCounter.setAttribute('value', 'Round ' + (index + 1) + ' of ' + this.totalRounds);
+    if (this.roundCounter) {
+      this.roundCounter.setAttribute('value', 'Round ' + (index + 1) + ' of ' + this.totalRounds);
     }
 
     this.isWaiting = false;
@@ -267,18 +276,10 @@ AFRAME.registerComponent('image-guesser', {
   },
 
   showFeedback: function(text, color) {
-    console.log('🔔 showFeedback called:', text);
-    
-    const feedbackEl = document.querySelector('#game-feedback');
-    const feedbackText = document.querySelector('#feedback-text');
-    
-    if (feedbackEl && feedbackText) {
-      feedbackText.setAttribute('value', text);
-      feedbackText.setAttribute('color', color);
-      feedbackEl.setAttribute('visible', true);
-      console.log('✅ Feedback shown:', text);
-    } else {
-      console.error('❌ Feedback elements not found');
+    if (this.feedbackEl && this.feedbackText) {
+      this.feedbackText.setAttribute('value', text);
+      this.feedbackText.setAttribute('color', color);
+      this.feedbackEl.setAttribute('visible', true);
     }
   },
 
@@ -366,14 +367,10 @@ AFRAME.registerComponent('image-guesser', {
       
       buttonsContainer.appendChild(restartBtn);
 
-      // Add click handler directly to restartBtn entity
+      // Add click handler
       const self = this;
-      restartBtn.addEventListener('click', function(evt) {
-        // Only respond if movement scene is active
-        if (!self.isMovementSceneActive()) return;
-        
-        console.log('🔄 Restart clicked');
-        evt.stopPropagation();
+      restartBtn.addEventListener('click', function() {
+        console.log('Restart clicked');
         self.startGame();
       });
 
@@ -387,7 +384,6 @@ AFRAME.registerComponent('image-guesser', {
     }
 
     restartBtn.setAttribute('visible', true);
-    console.log('✅ Restart button shown');
   }
 });
 
@@ -409,30 +405,6 @@ AFRAME.registerComponent('game-answer-button', {
 
     // Click handler
     el.addEventListener('click', function(evt) {
-      // Check if movement scene is active using Three.js visibility
-      const movementScene = document.querySelector('#movement-scene');
-      if (!movementScene) {
-        console.log('Movement scene element not found');
-        return;
-      }
-      
-      const attrVisible = movementScene.getAttribute('visible');
-      const objVisible = movementScene.object3D.visible;
-      const isVisible = (attrVisible !== 'false' && attrVisible !== false) && objVisible;
-      
-      if (!isVisible) {
-        console.log('Movement scene not active, ignoring answer click');
-        return;
-      }
-      
-      // Check if ANSWER BUTTON (parent) IS VISIBLE
-      const parent = el.parentElement;
-      const btnVisible = parent && parent.getAttribute('visible') !== false;
-      if (!btnVisible) {
-        console.log('Answer button hidden, ignoring click');
-        return;
-      }
-      
       console.log('>>> ANSWER BUTTON CLICKED:', answer, '<<<');
       
       // Stop event propagation
@@ -447,6 +419,7 @@ AFRAME.registerComponent('game-answer-button', {
       }
 
       // Visual feedback on parent
+      const parent = el.parentElement;
       if (parent) {
         parent.setAttribute('scale', '0.9 0.9 0.9');
         setTimeout(function() {
@@ -480,52 +453,23 @@ AFRAME.registerComponent('start-game-button', {
 
     // Click handler
     el.addEventListener('click', function(evt) {
-      // CHECK IF RESTART BUTTON EXISTS AND IS VISIBLE FIRST
-      const restartBtn = document.querySelector('#btn-restart');
-      if (restartBtn && restartBtn.getAttribute('visible') !== false) {
-        console.log('Restart button visible, ignoring START button click');
-        return; // EXIT EARLY
-      }
-      
-      // Check if movement scene is active using Three.js visibility
-      const movementScene = document.querySelector('#movement-scene');
-      if (!movementScene) {
-        console.log('Movement scene element not found');
-        return;
-      }
-      
-      const attrVisible = movementScene.getAttribute('visible');
-      const objVisible = movementScene.object3D.visible;
-      const isVisible = (attrVisible !== 'false' && attrVisible !== false) && objVisible;
-      
-      if (!isVisible) {
-        console.log('Movement scene not active, ignoring start click');
-        return;
-      }
-
-      // Check if START button is visible
-      const startBtn = document.querySelector('#btn-start');
-      const btnVisible = startBtn && startBtn.getAttribute('visible') !== false;
-      if (!btnVisible) {
-        console.log('START button hidden, ignoring click');
-        return;
-      }
-      
       console.log('>>> START GAME BUTTON CLICKED <<<');
       
-      // Stop event propagation
+      // Stop event propagation to prevent keyboard from catching it
       evt.stopPropagation();
       
-      // Find the image-guesser component and start the game
+      // Find the image-guesser component
       const guesser = document.querySelector('[image-guesser]');
       if (guesser && guesser.components['image-guesser']) {
         const game = guesser.components['image-guesser'];
+        game.setupGame();
         game.startGame();
       } else {
         console.warn('Image guesser not found');
       }
 
       // Hide the start button
+      const startBtn = document.querySelector('#btn-start');
       if (startBtn) {
         startBtn.setAttribute('visible', false);
       }

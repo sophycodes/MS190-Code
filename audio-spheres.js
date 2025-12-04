@@ -1,11 +1,17 @@
 /**
  * audio-spheres.js - Creates neon green spheres that record and playback user's voice
+ * WITH SUPABASE INTEGRATION - Auto-saves recordings to database
  * 
  * When user speaks: Records 10 seconds of audio and stores in a sphere
  * When user clicks sphere: Plays back the recorded audio
  */
 
 console.log('=== audio-spheres.js FILE LOADED ===');
+
+// Supabase Configuration
+const SUPABASE_URL = 'https://lhbfbvdjpgrihsibymkw.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoYmZidmRqcGdyaWhzaWJ5bWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5NTU5MTksImV4cCI6MjA3OTUzMTkxOX0.zNQ63iaifP-iLjGwwdzfZSd6ks_6w2aAf5YUFl5R-Zo';
+const STORAGE_BUCKET = 'audio-recordings';
 
 AFRAME.registerComponent('audio-spheres', {
   schema: {
@@ -27,6 +33,9 @@ AFRAME.registerComponent('audio-spheres', {
     
     // Request microphone access
     this.setupAudio();
+    
+    // Load saved spheres from Supabase
+    this.loadSavedSpheres();
     
     // Check audio levels periodically
     this.tick = AFRAME.utils.throttleTick(this.tick, 100, this);
@@ -56,6 +65,117 @@ AFRAME.registerComponent('audio-spheres', {
     } catch (error) {
       console.warn('Microphone access denied:', error);
     }
+  },
+  
+  loadSavedSpheres: async function() {
+    try {
+      console.log('Loading saved audio spheres from Supabase...');
+      
+      // Fetch all saved spheres
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/audio_spheres?select=*`, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to load spheres:', response.status);
+        return;
+      }
+      
+      const savedSpheres = await response.json();
+      console.log('Found', savedSpheres.length, 'saved spheres');
+      
+      // Recreate each saved sphere
+      for (const data of savedSpheres) {
+        await this.recreateSphere(data);
+      }
+      
+    } catch (error) {
+      console.error('Error loading saved spheres:', error);
+    }
+  },
+  
+  recreateSphere: async function(data) {
+    // Create sphere entity
+    const sphere = document.createElement('a-entity');
+    sphere.hasAudio = true;
+    sphere.audioUrl = data.audio_url;
+    sphere.isPlaying = false;
+    sphere.supabaseId = data.id;
+    
+    // Set saved position
+    sphere.setAttribute('position', `${data.position_x} ${data.position_y} ${data.position_z}`);
+    sphere.setAttribute('class', 'clickable');
+    
+    // Create green sphere (ready to play)
+    sphere.setAttribute('geometry', {
+      primitive: 'sphere',
+      radius: 0.4
+    });
+    sphere.setAttribute('material', {
+      color: '#00ff00',
+      shader: 'flat',
+      opacity: 0.9,
+      transparent: true
+    });
+    
+    // Add gentle float animation
+    sphere.setAttribute('animation', {
+      property: 'position',
+      to: `${data.position_x} ${data.position_y + 0.5} ${data.position_z}`,
+      dir: 'alternate',
+      loop: true,
+      dur: 2000 + Math.random() * 1000,
+      easing: 'easeInOutSine'
+    });
+    
+    // Add gentle pulse
+    sphere.setAttribute('animation__pulse', {
+      property: 'scale',
+      from: '1 1 1',
+      to: '1.1 1.1 1.1',
+      dir: 'alternate',
+      loop: true,
+      dur: 1500,
+      easing: 'easeInOutQuad'
+    });
+    
+    // Add orbiting rings
+    this.createOrbitRings(sphere, data.position_x, data.position_y, data.position_z);
+    
+    // Add play icon text
+    const playIcon = document.createElement('a-text');
+    playIcon.setAttribute('value', '▶');
+    playIcon.setAttribute('align', 'center');
+    playIcon.setAttribute('color', '#ffffff');
+    playIcon.setAttribute('width', '3');
+    playIcon.setAttribute('position', '0 0 0.5');
+    sphere.appendChild(playIcon);
+    sphere.playIcon = playIcon;
+    
+    // Add click handler for playback
+    const self = this;
+    sphere.addEventListener('click', function(evt) {
+      evt.stopPropagation();
+      self.playAudio(sphere);
+    });
+    
+    // Add hover effects
+    sphere.addEventListener('mouseenter', function() {
+      sphere.setAttribute('scale', '1.3 1.3 1.3');
+    });
+    
+    sphere.addEventListener('mouseleave', function() {
+      sphere.setAttribute('scale', '1 1 1');
+    });
+    
+    // Add to scene and track
+    this.el.appendChild(sphere);
+    this.spheres.push(sphere);
+    
+    console.log('Recreated sphere at', data.position_x, data.position_y, data.position_z);
   },
   
   tick: function() {
@@ -142,6 +262,7 @@ AFRAME.registerComponent('audio-spheres', {
       
       // Store audio URL in the sphere
       sphere.audioUrl = audioUrl;
+      sphere.audioBlob = audioBlob;
       sphere.hasAudio = true;
       
       // Update sphere appearance to show it has audio
@@ -184,6 +305,7 @@ AFRAME.registerComponent('audio-spheres', {
     const sphere = document.createElement('a-entity');
     sphere.hasAudio = false;
     sphere.audioUrl = null;
+    sphere.audioBlob = null;
     sphere.isPlaying = false;
     
     // Random position around user
@@ -223,7 +345,7 @@ AFRAME.registerComponent('audio-spheres', {
     this.createRecordingRings(sphere, x, y, z);
     
     // Add to scene
-    this.el.sceneEl.appendChild(sphere);
+    this.el.appendChild(sphere);
     this.spheres.push(sphere);
     
     return sphere;
@@ -266,7 +388,7 @@ AFRAME.registerComponent('audio-spheres', {
       // Store reference and add to scene
       sphere.recordingRings = sphere.recordingRings || [];
       sphere.recordingRings.push(ring);
-      this.el.sceneEl.appendChild(ring);
+      this.el.appendChild(ring);
     }
   },
   
@@ -343,6 +465,75 @@ AFRAME.registerComponent('audio-spheres', {
     });
     
     console.log('Sphere ready! Click to play recording.');
+    
+    // Save to Supabase
+    this.saveSphereToSupabase(sphere);
+  },
+  
+  saveSphereToSupabase: async function(sphere) {
+    try {
+      const pos = sphere.getAttribute('position');
+      
+      // Generate unique filename
+      const filename = `recording_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.webm`;
+      
+      console.log('Uploading audio to Supabase Storage...');
+      
+      // Upload audio to Supabase Storage
+      const uploadResponse = await fetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${filename}`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': sphere.audioBlob.type
+        },
+        body: sphere.audioBlob
+      });
+      
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        console.error('Failed to upload audio:', uploadResponse.status, errorText);
+        return;
+      }
+      
+      console.log('Audio uploaded successfully!');
+      
+      // Get public URL for the uploaded audio
+      const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${filename}`;
+      
+      console.log('Saving sphere metadata to database...');
+      
+      // Save sphere metadata to database
+      const dbResponse = await fetch(`${SUPABASE_URL}/rest/v1/audio_spheres`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
+          audio_url: publicUrl,
+          position_x: pos.x,
+          position_y: pos.y,
+          position_z: pos.z
+        })
+      });
+      
+      if (dbResponse.ok) {
+        const savedData = await dbResponse.json();
+        sphere.supabaseId = savedData[0].id;
+        // Update sphere to use the public URL instead of blob URL
+        sphere.audioUrl = publicUrl;
+        console.log('✅ Sphere saved to Supabase! ID:', sphere.supabaseId);
+      } else {
+        const errorText = await dbResponse.text();
+        console.error('Failed to save sphere metadata:', dbResponse.status, errorText);
+      }
+      
+    } catch (error) {
+      console.error('Error saving sphere to Supabase:', error);
+    }
   },
   
   createOrbitRings: function(sphere, x, y, z) {
@@ -367,7 +558,7 @@ AFRAME.registerComponent('audio-spheres', {
       
       sphere.orbitRings = sphere.orbitRings || [];
       sphere.orbitRings.push(ring);
-      this.el.sceneEl.appendChild(ring);
+      this.el.appendChild(ring);
     }
   },
   
@@ -394,8 +585,8 @@ AFRAME.registerComponent('audio-spheres', {
     console.log('>>> PLAYING AUDIO <<<');
     sphere.isPlaying = true;
     
-    // Visual feedback - change color while playing
-    sphere.setAttribute('material', 'color', '#ffff00');
+    // Visual feedback - stays green now!
+    sphere.setAttribute('material', 'color', '#00ff00');
     if (sphere.playIcon) {
       sphere.playIcon.setAttribute('value', '◼');
     }
@@ -433,14 +624,14 @@ AFRAME.registerComponent('audio-spheres', {
   },
   
   createPlaybackWaves: function(x, y, z) {
-    // Create expanding sound wave rings during playback
+    // Create expanding sound wave rings during playback (GREEN not yellow!)
     for (let i = 0; i < 5; i++) {
       setTimeout(() => {
         const ring = document.createElement('a-ring');
         ring.setAttribute('position', `${x} ${y} ${z}`);
         ring.setAttribute('radius-inner', '0.5');
         ring.setAttribute('radius-outer', '0.6');
-        ring.setAttribute('color', '#ffff00');
+        ring.setAttribute('color', '#00ff00');  // Changed from yellow to green!
         ring.setAttribute('opacity', '0.8');
         ring.setAttribute('material', 'shader: flat; side: double');
         
@@ -462,7 +653,7 @@ AFRAME.registerComponent('audio-spheres', {
           easing: 'linear'
         });
         
-        this.el.sceneEl.appendChild(ring);
+        this.el.appendChild(ring);
         
         // Remove after animation
         setTimeout(() => {
@@ -496,4 +687,4 @@ AFRAME.registerComponent('audio-spheres', {
   }
 });
 
-console.log('audio-spheres component registered - Click spheres to hear recordings!');
+console.log('audio-spheres component registered with Supabase integration!');

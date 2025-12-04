@@ -77,13 +77,13 @@ function setup() {
   inputBox = createInput('');
   inputBox.size(inputBoxW, inputBoxH);
   inputBox.center('horizontal'); // Center horizontally only
-  inputBox.position(inputBox.x, height / 2 - 50); // Set vertical position
+  inputBox.position(inputBox.x, height / 2 - 10); // Set vertical position
   inputBox.style('font-size', '20px');
   inputBox.style('padding', '10px');
   inputBox.style('background-color', '#000000');
   inputBox.style('color', '#00ff00');
   inputBox.style('border', '2px solid #00ff00');
-  inputBox.attribute('placeholder', 'ex: Sophy21***');
+  inputBox.attribute('placeholder', 'ex: Sophy21✪✪✪✪✪✪✪✪✪');
   
   // Create submit button
   submitButton = createButton('CONTINUE');
@@ -124,10 +124,10 @@ function draw() {
 
 
   textSize(28);
-  text("WELCOME TO DATA ECHOES & TRACES", (width / 2) + 8, height / 2 - 120);
+  text("WELCOME TO DATA ECHOES & TRACES", (width / 2) + 8, height / 2 - 80);
 
   textSize(24);
-  text("Authenticate Identity Name and Age to Proceed", (width / 2) + 8, height / 2 - 80);
+  text("Authenticate Identity Name and Age to Proceed", (width / 2) + 8, height / 2 - 40);
   
   // Reset text settings for streams
   textSize(symbolSize);

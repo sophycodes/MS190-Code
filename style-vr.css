@@ -1,0 +1,19 @@
+/* Black loading screen background */
+.a-loader-title {
+  background-color: #000000 !important;
+}
+
+/* Make the entire body black during loading */
+body {
+  background-color: #000000;
+}
+
+/* Target the A-Frame canvas container */
+.a-canvas {
+  background-color: #000000;
+}
+
+/* Style the loading bar */
+.a-loader-title {
+  color: #00ff00; /* Green text to match your aesthetic */
+}

@@ -458,64 +458,275 @@
 
 
     <!-- ============================================ -->
-    <!-- AUDIO SCENE -->
+        <!-- AUDIO SCENE -->
     <!-- ============================================ -->
     <a-entity id="audio-scene" visible="false">
+    <a-sky color="#000000"></a-sky>
+    <a-entity grid-floor="size: 50; divisions: 50; colorGrid: #00ff00"></a-entity>
+    <!-- Lighting -->
+    <a-light type="ambient" intensity="0.3" color="#002200"></a-light>
+    <a-light type="point" position="0 10 0" intensity="1" color="#00ff00" distance="50"></a-light>
+    <!-- Floating Cyber Eye in Center -->
+    <a-entity 
+    gltf-model="#cyber-eye"
+    position="0 8 0"
+    scale="3 3 3"
+    animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
+    animation__float="property: position; to: 0 4 0; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine">
+    <a-light type="point" color="#00ff00" intensity="2" distance="30"></a-light>
+    </a-entity>
+    <!-- Environment Title (above eye) -->
+    <a-text 
+    value="AUDIO REALM" 
+    align="center" 
+    position="0 12 0" 
+    color="#00ff00" 
+    width="20"
+    opacity="0.8">
+    </a-text>
+    <!-- Voice-reactive spheres -->
+    <a-entity audio-spheres="sensitivity: 35; maxSpheres: 15; recordDuration: 15"></a-entity>
+    <!-- Music spheres -->
+    <a-entity music-spheres="count: 8; radius: 15; audioFiles: audio/cyber.mp3, audio/augmentation.mp3"></a-entity>
+
+    <!-- ============================================ -->
+    <!-- AUDIO GUESSING GAME  -->
+    <!-- ============================================ -->
+    <a-entity id="audio-guess-area" position="0 0 -15" audio-guesser>
       
-      <a-sky color="#000000"></a-sky>
-      
-      <a-entity grid-floor="size: 50; divisions: 50; colorGrid: #00ff00"></a-entity>
-      
-      <!-- Lighting -->
-      <a-light type="ambient" intensity="0.3" color="#002200"></a-light>
-      <a-light type="point" position="0 10 0" intensity="1" color="#00ff00" distance="50"></a-light>
-      
-      <!-- Floating Cyber Eye in Center -->
-      <a-entity 
-        gltf-model="#cyber-eye"
-        position="0 8 0"
-        scale="3 3 3"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
-        animation__float="property: position; to: 0 4 0; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine">
-        <a-light type="point" color="#00ff00" intensity="2" distance="30"></a-light>
-      </a-entity>
-      
-      <!-- Environment Title (above eye) -->
+      <!-- Title -->
       <a-text 
-        value="AUDIO REALM" 
+        value="AUDIO AUTHENTICATION TEST" 
         align="center" 
-        position="0 12 0" 
-        color="#00ff00" 
-        width="20"
-        opacity="0.8">
+        position="0 5 0" 
+        color="#9900ff" 
+        width="12"
+        opacity="0.9">
       </a-text>
       
+      <!-- Instructions -->
+      <a-text
+        id="audio-instruction-text"
+        value="Click START to begin"
+        align="center"
+        position="0 4 0"
+        color="#00ffff"
+        width="8">
+      </a-text>
       
-      <!-- Voice-reactive spheres -->
-      <a-entity audio-spheres="sensitivity: 35; maxSpheres: 15; recordDuration: 15"></a-entity>
+      <!-- Round Counter -->
+      <a-text
+        id="audio-round-text"
+        value="5 rounds"
+        align="center"
+        position="0 -3 0"
+        color="#9900ff"
+        width="6">
+      </a-text>
       
-      <!-- Music spheres -->
-      <a-entity music-spheres="count: 8; radius: 15; audioFiles: audio/cyber.mp3, audio/augmentation.mp3"></a-entity>
+      <!-- Central Audio Sphere (hidden initially) -->
+      <a-entity 
+        id="audio-play-sphere" 
+        position="0 2 0"
+        visible="false">
+        
+        <!-- Outer glow -->
+        <a-sphere 
+          radius="0.7" 
+          position="0 0 -0.1"
+          material="color: #9900ff; shader: flat; opacity: 0.3; transparent: true">
+        </a-sphere>
+        
+        <!-- Main sphere -->
+        <a-sphere 
+          radius="0.6" 
+          material="color: #9900ff; shader: flat; opacity: 0.9; transparent: true">
+        </a-sphere>
+        
+        <!-- Orbiting rings -->
+        <a-torus 
+          radius="0.8" 
+          radius-tubular="0.02" 
+          material="color: #9900ff; shader: flat; opacity: 0.5"
+          animation="property: rotation; to: 0 360 0; dur: 4000; easing: linear; loop: true">
+        </a-torus>
+        
+        <a-torus 
+          radius="0.8" 
+          radius-tubular="0.02" 
+          material="color: #ff00ff; shader: flat; opacity: 0.5"
+          rotation="90 0 0"
+          animation="property: rotation; to: 90 360 0; dur: 3000; easing: linear; loop: true">
+        </a-torus>
+      </a-entity>
       
-      <!-- Back Button -->
-      <a-entity portal-button="target: intro" position="0 1.5 5">
+      <!-- PLAY BUTTON (hidden initially) - Parent entity is clickable -->
+      <a-entity 
+        id="btn-play-audio"
+        position="0 0 3"
+        visible="false">
+        
         <a-box 
-          color="#00ff00" 
-          depth="0.2" 
-          height="1" 
           width="3" 
-          class="clickable"
-          material="shader: flat">
+          height="1" 
+          depth="0.15"
+          position="0 0 -0.05"
+          material="color: #9900ff; shader: flat; opacity: 0.4">
         </a-box>
+        
+        <a-box 
+          width="2.8" 
+          height="0.8" 
+          depth="0.2"
+          material="color: #440044">
+        </a-box>
+        
         <a-text 
-          value="EXIT" 
+          value="▶ PLAY" 
           align="center" 
-          position="0 0 0.11" 
-          color="#000000" 
-          width="6">
+          position="0 0 0.11"
+          color="#9900ff"
+          width="8">
         </a-text>
       </a-entity>
+      
+      <!-- Answer Buttons (Parent entities are clickable) -->
+      <a-entity id="audio-answer-buttons" position="0 0 3">
+        
+        <!-- REAL Button (Left) -->
+        <a-entity 
+          id="btn-guess-real"
+          position="-2.5 0 0"
+          visible="false">
+          
+          <a-box 
+            width="2.2" 
+            height="1" 
+            depth="0.15"
+            position="0 0 -0.05"
+            material="color: #00ff00; shader: flat; opacity: 0.3">
+          </a-box>
+          
+          <a-box 
+            width="2" 
+            height="0.8" 
+            depth="0.2"
+            material="color: #004400">
+          </a-box>
+          
+          <a-text 
+            value="REAL" 
+            align="center" 
+            position="0 0 0.11"
+            color="#00ff00"
+            width="5">
+          </a-text>
+        </a-entity>
+        
+        <!-- AI Button (Right) -->
+        <a-entity 
+          id="btn-guess-ai"
+          position="2.5 0 0"
+          visible="false">
+          
+          <a-box 
+            width="2.2" 
+            height="1" 
+            depth="0.15"
+            position="0 0 -0.05"
+            material="color: #ff00ff; shader: flat; opacity: 0.3">
+          </a-box>
+          
+          <a-box 
+            width="2" 
+            height="0.8" 
+            depth="0.2"
+            material="color: #440044">
+          </a-box>
+          
+          <a-text 
+            value="AI" 
+            align="center" 
+            position="0 0 0.11"
+            color="#ff00ff"
+            width="5">
+          </a-text>
+        </a-entity>
+        
+        <!-- START Button (Parent entity is clickable) -->
+        <a-entity 
+          id="btn-start-audio-game"
+          position="0 0 0"
+          visible="true">
+          
+          <a-box 
+            width="3"
+            height="1.2"
+            depth="0.15"
+            position="0 0 -0.05"
+            material="color: #00ffff; shader: flat; opacity: 0.4">
+          </a-box>
+          
+          <a-box 
+            width="2.8"
+            height="1"
+            depth="0.2"
+            material="color: #006666">
+          </a-box>
+          
+          <a-text 
+            value="START"
+            align="center"
+            position="0 0 0.11"
+            color="#00ffff"
+            width="8">
+          </a-text>
+        </a-entity>
+        
+      </a-entity>
+      
+      <!-- Feedback Display -->
+      <a-entity id="audio-game-feedback" position="0 3 0" visible="false">
+        <a-text
+          id="audio-feedback-text"
+          value=""
+          align="center"
+          color="#ffffff"
+          width="10">
+        </a-text>
+      </a-entity>
+      
+      <!-- Score Display -->
+      <a-entity id="audio-score-display" position="0 6 0">
+        <a-text
+          id="audio-score-text"
+          value=""
+          align="center"
+          color="#00ffff"
+          width="8">
+        </a-text>
+      </a-entity>
+      
+    </a-entity>
 
+    <!-- Back Button -->
+    <a-entity portal-button="target: intro" position="0 1.5 5">
+    <a-box 
+    color="#00ff00" 
+    depth="0.2" 
+    height="1" 
+    width="3" 
+    class="clickable"
+    material="shader: flat">
+    </a-box>
+    <a-text 
+    value="EXIT" 
+    align="center" 
+    position="0 0 0.11" 
+    color="#000000" 
+    width="6">
+    </a-text>
+    </a-entity>
     </a-entity>
     <!-- END AUDIO SCENE -->
 
@@ -808,6 +1019,7 @@
   <script src="player.js"></script>
   <script src="pathways.js"></script>
   <script src="audio-spheres.js"></script>
+  <script src="audio-guesser.js"></script> 
   <!-- <script src="music-spheres.js"></script> -->
   <script src="movement-trail.js"></script>
   <script src="image-guesser.js"></script>

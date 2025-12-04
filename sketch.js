@@ -67,7 +67,7 @@ function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
   background(0);
 
-  let inputBoxW = 300;
+  let inputBoxW = 310;
   let inputBoxH = 40;
   let buttonW = 100;
   let buttonH = 40;
@@ -83,10 +83,10 @@ function setup() {
   inputBox.style('background-color', '#000000');
   inputBox.style('color', '#00ff00');
   inputBox.style('border', '2px solid #00ff00');
-  inputBox.attribute('placeholder', 'Enter password...');
+  inputBox.attribute('placeholder', 'ex: Sophy21***');
   
   // Create submit button
-  submitButton = createButton('SUBMIT');
+  submitButton = createButton('CONTINUE');
   submitButton.size(buttonW, buttonH);
   submitButton.center('horizontal'); // Center horizontally only
   submitButton.position(submitButton.x + 7, inputBox.y + inputBoxH + 40); // 20px below input
@@ -121,7 +121,13 @@ function draw() {
   fill(0, 255, 70); // Green color
   textSize(20);
   textAlign(CENTER);
-  text("WHAT'S YOUR BEST KEPT SECRET?", (width / 2) + 8, height / 2 - 80);
+
+
+  textSize(28);
+  text("WELCOME TO DATA ECHOES & TRACES", (width / 2) + 8, height / 2 - 120);
+
+  textSize(24);
+  text("Authenticate Identity Name and Age to Proceed", (width / 2) + 8, height / 2 - 80);
   
   // Reset text settings for streams
   textSize(symbolSize);
@@ -148,6 +154,10 @@ function handleSubmit() {
     
     // Clear the input
     inputBox.value('');
+
+    setTimeout(() => {
+      window.location.href = 'index.html'; // Change to your VR HTML filename
+    }, 500); // 500ms delay for smooth transition
     
     console.log('User words:', userWords); // Debug
   }

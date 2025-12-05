@@ -49,7 +49,7 @@ AFRAME.registerComponent('portal-button', {
       
       // For entering realms: animate player forward
       const currentPos = player.getAttribute('position');
-      
+
       // Animate player forward 10 units
       player.setAttribute('animation', {
         property: 'position',
@@ -57,6 +57,26 @@ AFRAME.registerComponent('portal-button', {
         dur: 1000,  // 1 second
         easing: 'easeInQuad'
       });
+
+      // Switch scene after animation completes
+      setTimeout(() => {
+        const sceneManager = document.querySelector('[scene-manager]');
+        if (sceneManager && sceneManager.components['scene-manager']) {
+          sceneManager.components['scene-manager'].switchScene(data.target);
+          
+          // Set player position based on which realm they entered
+          if (data.target === 'text') {
+            player.setAttribute('position', '6 -0.4 5');
+          } else if (data.target === 'audio') {
+            player.setAttribute('position', '0 -0.4 5');
+          } else if (data.target === 'movement') {
+            player.setAttribute('position', '0 -0.4 5');
+          }
+          
+        } else {
+          console.warn('Scene manager not found');
+        }
+      }, 1000);  // Wait for animation to finish
       
       // Switch scene after animation completes
       setTimeout(() => {

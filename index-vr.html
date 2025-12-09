@@ -59,18 +59,25 @@
           fuse="false">
         </a-cursor>
       </a-camera>
-      
+
+      <!-- LEFT HAND - Add controller-movement for thumbstick movement -->
       <a-entity 
         id="leftHand" 
+        oculus-touch-controls="hand: left"
+        controller-movement="speed: 2.5"
         hand-controls="hand: left; handModelStyle: lowPoly; color: #00FFFF"
         position="-0.3 0 -0.5"
         ribbon-trail="color: #00ffff; maxPoints: 60; fadeTime: 2000; width: 0.04"
         ghost-silhouette="color: #00ffff; interval: 400">
       </a-entity>
 
+      <!-- RIGHT HAND - Add laser-controls for better portal/button interaction -->
       <a-entity 
         id="rightHand" 
+        oculus-touch-controls="hand: right"
         hand-controls="hand: right; handModelStyle: lowPoly; color: #00FFFF"
+        laser-controls
+        raycaster="objects: .clickable, .portal; far: 10"
         position="0.3 0 -0.5"
         ribbon-trail="color: #ff00ff; maxPoints: 60; fadeTime: 2000; width: 0.04"
         ghost-silhouette="color: #ff00ff; interval: 400">
@@ -1029,6 +1036,7 @@
   </a-scene>
 
   <script src="supabase-config.js"></script>
+  <script src="controller-movement.js"></script>
   <script src="grid-floor.js"></script>
   <script src="portal-button.js"></script>
   <script src="vr-keyboard.js"></script>
@@ -1038,25 +1046,13 @@
   <script src="player.js"></script>
   <script src="pathways.js"></script>
   <script src="permanent-trail.js"></script>
-  <script>
-  console.log('🚨 Script tag after permanent-trail.js ran!');
-  console.log('Is permanent-trail registered?', AFRAME.components['permanent-trail']);
-  </script>
   <script src="audio-spheres.js"></script>
   <!-- <script src="audio-guesser.js"></script>  -->
   <script src="music-spheres.js"></script>
   <!-- <script src="movement-trail.js"></script> -->
   <script src="image-guesserOG.js"></script>
 
-  <script>
-    setTimeout(() => {
-      const scene = document.querySelector('a-scene');
-      console.log('=== SCENE DIAGNOSTICS ===');
-      console.log('Scene element:', scene);
-      console.log('Has scene-manager component?', scene.components['scene-manager']);
-      console.log('All components on scene:', Object.keys(scene.components));
-    }, 4000);
-  </script>
+
 
 </body>
 </html>

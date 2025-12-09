@@ -650,14 +650,114 @@
       </a-text>
       
       <!-- DECORATIVE DATA STREAMS -->
-      <a-entity id="data-streams-blue">
+      <!-- <a-entity id="data-streams-blue">
         <a-cylinder position="-8 5 -12" radius="0.03" height="10" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
         <a-cylinder position="-5 7 -18" radius="0.03" height="14" material="color: #0066ff; shader: flat" opacity="0.5"></a-cylinder>
         <a-cylinder position="6 4 -15" radius="0.03" height="8" material="color: #00ffff; shader: flat" opacity="0.7"></a-cylinder>
         <a-cylinder position="10 6 -20" radius="0.03" height="12" material="color: #0088ff; shader: flat" opacity="0.5"></a-cylinder>
         <a-cylinder position="-12 5 -8" radius="0.03" height="10" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
         <a-cylinder position="8 8 -10" radius="0.03" height="16" material="color: #0044ff; shader: flat" opacity="0.5"></a-cylinder>
+      </a-entity> -->
+
+      <!-- EXPANDED DATA STREAMS - Add this to your existing scene -->
+      <!-- This expands on your existing 6 blue cylinders to fill the entire realm -->
+      <!-- Just paste this entire block into your VR scene HTML -->
+
+      <a-entity id="data-streams-expanded">
+        
+        <!-- YOUR EXISTING 6 (keeping them) -->
+        <a-cylinder position="-8 5 -12" radius="0.03" height="10" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
+        <a-cylinder position="-5 7 -18" radius="0.03" height="14" material="color: #0066ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="6 4 -15" radius="0.03" height="8" material="color: #00ffff; shader: flat" opacity="0.7"></a-cylinder>
+        <a-cylinder position="10 6 -20" radius="0.03" height="12" material="color: #0088ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="-12 5 -8" radius="0.03" height="10" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
+        <a-cylinder position="8 8 -10" radius="0.03" height="16" material="color: #0044ff; shader: flat" opacity="0.5"></a-cylinder>
+        
+        <!-- ADDITIONAL STREAMS - FRONT ZONE -->
+        <a-cylinder position="-3 6 -10" radius="0.03" height="12" material="color: #00ccff; shader: flat" opacity="0.6"></a-cylinder>
+        <a-cylinder position="2 4 -14" radius="0.03" height="8" material="color: #0088ff; shader: flat" opacity="0.7"></a-cylinder>
+        <a-cylinder position="-10 7 -16" radius="0.03" height="14" material="color: #0066ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="12 5 -14" radius="0.03" height="10" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
+        
+        <!-- LEFT SIDE ZONE -->
+        <a-cylinder position="-15 4 -5" radius="0.03" height="8" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
+        <a-cylinder position="-18 6 0" radius="0.03" height="12" material="color: #0088ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="-16 5 5" radius="0.03" height="10" material="color: #00ccff; shader: flat" opacity="0.7"></a-cylinder>
+        <a-cylinder position="-20 7 -2" radius="0.03" height="14" material="color: #0066ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="-14 4 8" radius="0.03" height="8" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
+        
+        <!-- RIGHT SIDE ZONE -->
+        <a-cylinder position="15 4 -5" radius="0.03" height="8" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
+        <a-cylinder position="18 6 0" radius="0.03" height="12" material="color: #0088ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="16 5 5" radius="0.03" height="10" material="color: #00ccff; shader: flat" opacity="0.7"></a-cylinder>
+        <a-cylinder position="20 7 -2" radius="0.03" height="14" material="color: #0066ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="14 4 8" radius="0.03" height="8" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
+        
+        <!-- BACK ZONE -->
+        <a-cylinder position="-10 5 12" radius="0.03" height="10" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
+        <a-cylinder position="-5 7 15" radius="0.03" height="14" material="color: #0066ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="0 6 18" radius="0.03" height="12" material="color: #00ffff; shader: flat" opacity="0.7"></a-cylinder>
+        <a-cylinder position="5 4 15" radius="0.03" height="8" material="color: #0088ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="10 8 12" radius="0.03" height="16" material="color: #0044ff; shader: flat" opacity="0.5"></a-cylinder>
+        
+        <!-- CENTER ZONE (around player) -->
+        <a-cylinder position="-4 5 -2" radius="0.03" height="10" material="color: #00ffff; shader: flat" opacity="0.6"></a-cylinder>
+        <a-cylinder position="4 6 2" radius="0.03" height="12" material="color: #0088ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="-2 7 3" radius="0.03" height="14" material="color: #00ccff; shader: flat" opacity="0.7"></a-cylinder>
+        <a-cylinder position="1 4 -4" radius="0.03" height="8" material="color: #0066ff; shader: flat" opacity="0.6"></a-cylinder>
+        
+        <!-- CEILING STREAMS (create overhead atmosphere) -->
+        <a-cylinder position="-10 11 -8" radius="0.03" height="6" material="color: #00ffff; shader: flat" opacity="0.4"></a-cylinder>
+        <a-cylinder position="10 11 -8" radius="0.03" height="6" material="color: #00ffff; shader: flat" opacity="0.4"></a-cylinder>
+        <a-cylinder position="-10 11 8" radius="0.03" height="6" material="color: #00ffff; shader: flat" opacity="0.4"></a-cylinder>
+        <a-cylinder position="10 11 8" radius="0.03" height="6" material="color: #00ffff; shader: flat" opacity="0.4"></a-cylinder>
+        <a-cylinder position="0 12 0" radius="0.03" height="8" material="color: #0066ff; shader: flat" opacity="0.5"></a-cylinder>
+        
+        <!-- GROUND-LEVEL STREAMS (add depth near floor) -->
+        <a-cylinder position="-7 2 -7" radius="0.03" height="4" material="color: #00ffff; shader: flat" opacity="0.7"></a-cylinder>
+        <a-cylinder position="7 2 -7" radius="0.03" height="4" material="color: #00ffff; shader: flat" opacity="0.7"></a-cylinder>
+        <a-cylinder position="-7 2 7" radius="0.03" height="4" material="color: #00ffff; shader: flat" opacity="0.7"></a-cylinder>
+        <a-cylinder position="7 2 7" radius="0.03" height="4" material="color: #00ffff; shader: flat" opacity="0.7"></a-cylinder>
+        <a-cylinder position="0 2 0" radius="0.03" height="4" material="color: #00ccff; shader: flat" opacity="0.8"></a-cylinder>
+        
+        <!-- DIAGONAL ACCENTS (add dynamic feel) -->
+        <a-cylinder position="-12 6 -12" radius="0.03" height="12" material="color: #00ccff; shader: flat" opacity="0.6" rotation="0 0 10"></a-cylinder>
+        <a-cylinder position="12 6 -12" radius="0.03" height="12" material="color: #00ccff; shader: flat" opacity="0.6" rotation="0 0 -10"></a-cylinder>
+        <a-cylinder position="-12 6 12" radius="0.03" height="12" material="color: #00ccff; shader: flat" opacity="0.6" rotation="0 0 -10"></a-cylinder>
+        <a-cylinder position="12 6 12" radius="0.03" height="12" material="color: #00ccff; shader: flat" opacity="0.6" rotation="0 0 10"></a-cylinder>
+        
+        <!-- TALL ACCENT STREAMS (varied heights) -->
+        <a-cylinder position="-14 8 -3" radius="0.03" height="16" material="color: #0044ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="14 8 -3" radius="0.03" height="16" material="color: #0044ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="-14 9 3" radius="0.03" height="18" material="color: #0044ff; shader: flat" opacity="0.5"></a-cylinder>
+        <a-cylinder position="14 9 3" radius="0.03" height="18" material="color: #0044ff; shader: flat" opacity="0.5"></a-cylinder>
+        
       </a-entity>
+
+      <!-- OPTIONAL: Add subtle pulsing animation -->
+      <!-- Uncomment this if you want the streams to pulse -->
+      
+      <script>
+        AFRAME.registerComponent('pulse-streams', {
+          init: function() {
+            this.el.setAttribute('animation', {
+              property: 'material.opacity',
+              from: 0.3,
+              to: 0.9,
+              dur: 3000,
+              dir: 'alternate',
+              loop: true,
+              easing: 'easeInOutSine'
+            });
+          }
+        });
+        
+        // Apply to all cylinders in data-streams
+        document.querySelectorAll('#data-streams-expanded a-cylinder').forEach(cylinder => {
+          cylinder.setAttribute('pulse-streams', '');
+        });
+      </script>
+     
       
       <!-- IMAGE GUESSING GAME AREA -->
       <a-entity id="image-game-area" position="0 0 -10" image-guesser>

@@ -611,8 +611,29 @@
     <!-- ============================================ -->
     <!-- IMAGE SCENE (Movement Realm) -->
     <!-- ============================================ -->
-    <a-entity id="movement-scene" visible="false">
+    <a-entity id="movement-scene" data-scene="movement" visible="false">
 
+      <a-entity permanent-trail></a-entity>
+      <!-- TEMPORARY DEBUG CODE -->
+      <script>
+        setTimeout(() => {
+          console.log('=== TRAIL DEBUG ===');
+          
+          const movementScene = document.querySelector('#movement-scene');
+          console.log('Movement scene:', movementScene);
+          console.log('Movement scene visible?', movementScene?.object3D.visible);
+          console.log('Has data-scene attr?', movementScene?.getAttribute('data-scene'));
+          
+          const trailEntity = document.querySelector('[permanent-trail]');
+          console.log('Trail entity:', trailEntity);
+          console.log('Trail component:', trailEntity?.components['permanent-trail']);
+          
+          const camera = document.querySelector('[camera]');
+          console.log('Camera:', camera);
+          console.log('Camera position:', camera?.object3D.position);
+          
+        }, 5000);
+      </script>
       <!-- Dark Blue Sky -->
       <a-sky color="#000015"></a-sky>
       
@@ -1002,6 +1023,8 @@
       
     </a-entity>
     <!-- END MOVEMENT SCENE -->
+     <!-- Make sure this is in your <a-scene>: -->
+
 
   </a-scene>
 
@@ -1014,10 +1037,11 @@
   <script src="scene-manager.js"></script>
   <script src="player.js"></script>
   <script src="pathways.js"></script>
+  <script src="permanent-trail.js"></script>
   <script src="audio-spheres.js"></script>
   <!-- <script src="audio-guesser.js"></script>  -->
   <script src="music-spheres.js"></script>
-  <script src="movement-trail.js"></script>
+  <!-- <script src="movement-trail.js"></script> -->
   <script src="image-guesserOG.js"></script>
 
   <script>

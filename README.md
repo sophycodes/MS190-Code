@@ -1,4 +1,4 @@
-# Data Echoes & Traces
+# Data Echoes & Traces: A VR Installation
 
 ![Project Banner](assets/project_documentation/Scene2VRIntro.png)
 

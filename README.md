@@ -54,7 +54,7 @@ Data Echoes & Traces is an immersive WebXR experience that examines how users le
 
 ![Audio Realm](assets/project_documentation/AudioRealmIntro.png)
 
-**🔵 Image Realm (Blue) *In Development* **
+**🔵 Image Realm (Blue)** *In Development*
 - Hand tracking and gesture-based interaction
 - AI vs. real image authentication challenges
 - Neon ghost trails showing movement history

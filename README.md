@@ -1,8 +1,8 @@
-# FIGAROA: Data Echoes & Traces
+# Data Echoes & Traces
 
-![Project Banner](banner.jpg)
+![Project Banner](assets/project_documentation/Scene2VRIntro.png)
 
-**MS190 Final Project - Fall 2024**
+**MS190 Senior Project - Fall 2025**
 
 An interactive VR art installation exploring themes of data embodiment, techno-transcendence, digital surveillance, and the challenge of distinguishing authentic from fabricated information.
 
@@ -11,7 +11,7 @@ An interactive VR art installation exploring themes of data embodiment, techno-t
 
 ## Project Overview
 
-FIGAROA is an immersive WebXR experience that examines how users leave permanent digital traces while navigating challenges around data privacy, misinformation, and AI-generated content. The installation guides visitors through three interconnected scenes, each designed to provoke reflection on our digital existence.
+Data Echoes & Traces is an immersive WebXR experience that examines how users leave permanent digital traces while navigating challenges around data privacy, misinformation, and AI-generated content. The installation guides visitors through three interconnected scenes, each designed to provoke reflection on our digital existence.
 
 ### Three Scenes
 
@@ -21,18 +21,22 @@ FIGAROA is an immersive WebXR experience that examines how users leave permanent
    - Built with p5.js
    - Sets the tone for digital exploration
 
+![Digital Rain](assets/project_documentation/Scene1DigitalRain.png)
+
 2. **VR Cyberspace (Scene 2 - Main Experience)**
    - Three themed realms accessible through portal navigation
    - Immersive VR environment with controller-based movement
    - Cross-device data persistence via Supabase
    - Scaled for 10ft × 5ft physical space
 
-3. **Pixel Mirror (Scene 3)**
+![3 Paths](assets/project_documentation/Scene2VRIntro.png)
+
+3. **Pixel Mirror (Scene 3) *In Development* **
    - Real-time camera feed processing
    - Reflection on surveillance and digital self
    - Pixel art aesthetic
 
-### The Three Realms
+### The Three Realms in Scene 2
 
 **🔴 Text Realm (Red)**
 - Philosophical questions about truth and fiction
@@ -40,23 +44,23 @@ FIGAROA is an immersive WebXR experience that examines how users leave permanent
 - Interactive text input via VR keyboard
 - Permanent text traces stored as data echoes
 
+![Text Realm](assets/project_documentation/TextRealmIntro.png)
+
 **🟢 Audio Realm (Green)**
 - Voice recording system with spatial audio spheres
 - AI vs. real audio detection games
 - Persistent audio artifacts in virtual space
 - Web Audio API integration
 
-**🔵 Movement Realm (Blue)**
+![Audio Realm](assets/project_documentation/AudioRealmIntro.png)
+
+**🔵 Image Realm (Blue) *In Development* **
 - Hand tracking and gesture-based interaction
 - AI vs. real image authentication challenges
 - Neon ghost trails showing movement history
 - Real-time visual effects with Three.js shaders
 
-### Key Themes
-- **Data Embodiment**: Physical manifestation of digital traces
-- **Techno-Transcendence**: VR as a medium for exploring consciousness
-- **Digital Surveillance**: Awareness of persistent data collection
-- **Truth vs. Fiction**: Navigating AI-generated vs. authentic content
+![Image Realm](assets/project_documentation/ImageRealmIntro.png)
 
 ---
 
@@ -158,33 +162,6 @@ http://localhost:8000
 
 ---
 
-## Project Structure
-
-```
-FIGAROA/
-├── index.html                 # Scene 1: Digital Rain
-├── vr-scene.html             # Scene 2: VR Cyberspace
-├── pixel-mirror.html         # Scene 3: Camera Feed
-├── sketch.js                 # p5.js digital rain logic
-├── config.js                 # Supabase configuration
-├── components/
-│   ├── portal-button.js      # Realm navigation portals
-│   ├── vr-keyboard.js        # Virtual text input
-│   ├── scene-manager.js      # Realm switching logic
-│   ├── audio-recorder.js     # Voice recording system
-│   ├── trail-system.js       # Movement history visualization
-│   └── intro-cards.js        # Informational UI elements
-├── assets/
-│   ├── textures/            # Visual assets
-│   ├── audio/               # Sound effects
-│   └── fonts/               # Cyberpunk typography
-├── styles/
-│   └── main.css             # Global styles
-└── README.md
-```
-
----
-
 ## Running the Experience
 
 ### Web Deployment (Recommended)
@@ -217,54 +194,6 @@ python -m http.server 8000
 
 ---
 
-## Usage Examples
-
-### Navigating the Realms
-
-**Entering a Realm:**
-1. Look at colored portal (red/green/blue)
-2. Pull controller trigger to enter
-3. Wait for realm to load (2-3 seconds)
-
-**Interacting in Text Realm:**
-1. Approach VR keyboard
-2. Pull trigger to type
-3. Submit your response
-4. Data is permanently stored
-
-**Recording in Audio Realm:**
-1. Pull trigger to start recording
-2. Speak into headset microphone
-3. Release trigger to stop
-4. Audio sphere appears with your voice
-
-**Moving in Movement Realm:**
-1. Use thumbstick to navigate
-2. Watch your neon trail form behind you
-3. Trails persist as data echoes
-
-### Testing Individual Components
-
-**Test VR Keyboard:**
-```html
-<!-- Add to vr-scene.html -->
-<a-entity vr-keyboard position="0 1 -2"></a-entity>
-```
-
-**Test Audio Recording:**
-```javascript
-// Check browser console for audio capture
-console.log(navigator.mediaDevices);
-```
-
-**Test Trail System:**
-```html
-<!-- Verify trail component -->
-<a-entity trail-system></a-entity>
-```
-
----
-
 ## Physical Installation Setup
 
 ### Space Requirements
@@ -284,108 +213,10 @@ console.log(navigator.mediaDevices);
 
 Configure Quest for auto-launch:
 1. Enable Kiosk Mode in Meta Quest settings
-2. Set FIGAROA as default app
+2. Set Data Echoes & Traces as default app
 3. Disable browser navigation controls
 4. Set up automatic session reset
 
----
-
-## Development Notes
-
-### Known Issues & Solutions
-
-**Controller movement not working:**
-- Ensure `oculus-touch-controls` component is attached
-- Check browser console for WebXR API errors
-- Verify HTTPS connection
-
-**Audio recording fails:**
-- Grant microphone permissions in browser
-- Check `navigator.mediaDevices.getUserMedia` support
-- Verify HTTPS (required for media access)
-
-**Supabase connection errors:**
-- Verify API keys in `config.js`
-- Check CORS settings in Supabase dashboard
-- Ensure table schema matches code expectations
-
-### Performance Optimization
-
-**For smooth VR experience:**
-- Keep total entity count under 500
-- Use object pooling for trails/spheres
-- Optimize textures to 1024×1024 or smaller
-- Disable unnecessary physics calculations
-
-### Browser Compatibility
-
-| Browser | Desktop | VR Support |
-|---------|---------|-----------|
-| Chrome | ✅ | ✅ |
-| Firefox | ✅ | ✅ |
-| Edge | ✅ | ✅ |
-| Safari | ⚠️ Limited | ❌ |
-| Meta Quest Browser | N/A | ✅ Recommended |
-
----
-
-## Troubleshooting
-
-### Common Issues
-
-**"Enter VR" button not appearing:**
-```bash
-# Check if page is served over HTTPS
-# Verify WebXR browser support
-# Try in Meta Quest browser
-```
-
-**Black screen in VR:**
-```javascript
-// Check console for errors
-// Verify A-Frame version compatibility
-// Clear browser cache (Ctrl+Shift+R)
-```
-
-**Data not persisting:**
-```javascript
-// Verify Supabase configuration
-// Check network tab for API calls
-// Confirm database permissions
-```
-
-**Realm transitions freeze:**
-```javascript
-// Use hard reload between scenes
-// Check for duplicate entity IDs
-// Verify scene-manager component loaded
-```
-
----
-
-## API Reference
-
-### Custom A-Frame Components
-
-**`portal-button`**
-```html
-<a-entity portal-button="target: #textRealm; color: #ff0000"></a-entity>
-```
-
-**`vr-keyboard`**
-```html
-<a-entity vr-keyboard="target: #inputField"></a-entity>
-```
-
-**`audio-recorder`**
-```html
-<a-entity audio-recorder="color: #00ff00"></a-entity>
-```
-
-**`trail-system`**
-```html
-<a-entity trail-system="color: #0000ff; length: 100"></a-entity>
-```
 
 ---
 
@@ -399,19 +230,9 @@ This is a course final project, but feedback and suggestions are welcome!
 
 ---
 
-## Credits & Acknowledgments
-
-- **Course**: MS190 - Interactive Media Art
-- **Institution**: [Your University Name]
-- **Inspiration**: Moon Rider VR, The Matrix, Cyberpunk aesthetics
-- **Libraries**: A-Frame community, Three.js contributors
-- **Testing**: [Testers/Collaborators if any]
-
----
-
 ## License
 
-This project is created for educational purposes as part of MS190 coursework.
+This project is created as part of my senior exercise for Media Studies at Pomona College.
 
 ---
 
@@ -419,19 +240,6 @@ This project is created for educational purposes as part of MS190 coursework.
 
 **Sophy Figaroa**
 - GitHub: [@sophycodes](https://github.com/sophycodes)
-- Project Link: [https://github.com/sophycodes/FIGAROA](https://github.com/sophycodes/FIGAROA)
+- Project Link: [https://sophycodes.github.io/MS190-Code/](https://sophycodes.github.io/MS190-Code/)
 
 ---
-
-## Future Enhancements
-
-- [ ] Eye-tracking integration for gaze-based interactions
-- [ ] Multi-user support for collaborative experiences
-- [ ] Advanced AI detection models for better accuracy
-- [ ] Mobile AR version for broader accessibility
-- [ ] Gallery mode to revisit collected data echoes
-- [ ] Export functionality for personal data archives
-
----
-
-*"In the digital realm, every action leaves a trace. FIGAROA makes those traces visible, tangible, and unforgettable."*
